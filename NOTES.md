@@ -8,6 +8,15 @@
   5. Generate output data in node-link format.
 
 
+## questions
+
+Q: How should we represent network motifs?
+
+  - using the paths subset of Cypher as in GraphFrames
+  - the DSL in DotMotif <https://github.com/aplbrain/dotmotif/wiki/Getting-Started)
+  - FollowTheMoney controlled vocabulary <https://followthemoney.tech/explorer/>
+
+
 ## references
 
 "Financial Crime and Corruption Network Motifs"  
@@ -23,7 +32,7 @@ Steve Russo (2022-06-17)
 <https://betterprogramming.pub/3-examples-of-motifs-with-spark-graphframes-db873b3fdc8a>
 
 "Realistic Synthetic Graph Generation"  
-Christina_Eleftheriou (2024-03-04)  
+Christina Eleftheriou (2024-03-04)  
 <http://bit.ly/4h4qb44>
 
 "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
@@ -34,10 +43,22 @@ Jordan Matelsky, et al. (2021-06-21)
 ## notify list
 
 Clair Sullivan
+<https://github.com/cj2001>
+
+Friedrich Lindenberg @ OpenSanctiosn
+<https://github.com/pudo>
+
+Stephen Abbott Pugh @ OpenOwnership
+<https://github.com/StephenAbbott>
+
+Zornitsa Manolova @ GLEIF
+<https://github.com/GLEIF>
+
+Russ Jurney @ Graphlet.ai
+<https://github.com/rjurney>
 
 Allison Miller
 <https://www.linkedin.com/feed/update/urn:li:activity:7285305359005569024/>
 
 Amy Hodler @ GraphGeeks.org
-
-Russ Jurney
+<https://github.com/amyhodler>
