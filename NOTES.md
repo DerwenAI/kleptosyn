@@ -14,8 +14,8 @@ Q: How should we represent network motifs?
 
   - Mermaid syntax <https://mermaid.js.org/intro/syntax-reference.html>
   - FollowTheMoney controlled vocabulary <https://followthemoney.tech/explorer/>
-  - the DSL in DotMotif <https://github.com/aplbrain/dotmotif/wiki/Getting-Started)
-  - using the paths subset of Cypher as in GraphFrames
+  - the DSL in DotMotif <https://github.com/aplbrain/dotmotif/wiki/Getting-Started>
+  - paths subset of Cypher, as in GraphFrames <https://github.com/Graphlet-AI/graphml-class>
 
 
 ## references
@@ -66,3 +66,6 @@ Allison Miller
 
 Amy Hodler @ GraphGeeks.org
 <https://github.com/amyhodler>
+
+Jean Villedieu @ Linkurious
+<https://linkurious.com/>
