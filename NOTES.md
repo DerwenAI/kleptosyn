@@ -23,26 +23,35 @@
 Q: How should we represent network motifs?
 
   - Cypher paths subset in GraphFrames <https://github.com/Graphlet-AI/graphml-class/blob/main/graphml_class/stats/motif.py>
-    - Seems ginormous and slow, with loads of dependencies?
-    - GraphFrames has virtues, although we don't want to depend on this overall?
-    - Could we use a pure Python Cypher parser instead?
+    + Seems ginormous and slow, with loads of dependencies?
+    + GraphFrames has virtues, although we don't want to depend on this overall?
+    + Could we use a pure Python Cypher parser instead?
       - Pypher <https://github.com/emehrkay/Pypher>
       - Pycypher <https://github.com/Mizzlr/pycypher>
 
-  - Gremlin <https://tinkerpop.apache.org/docs/current/reference/#_features> provides a graph traversal language
+  - Gremlin: a graph traversal language
+    + programmatic definitions
+    + <https://tinkerpop.apache.org/docs/current/reference/#_features>
+    + <https://pypi.org/project/gremlinpython/>
 
   - SNAP <https://snap-stanford.github.io/cs224w-notes/preliminaries/motifs-and-structral-roles_lecture>
-    - RoIX and other methods seem more about identifying structural roles?
+    + RoIX and other methods seem more about identifying structural roles?
 
   - Mermaid syntax <https://mermaid.js.org/intro/syntax-reference.html>
-    - ER diagrams for many use cases, though perhaps not adaptable to network motifs?
+    + ER diagrams which work well for many schematic use cases.
+    + Though perhaps not adaptable to network motifs?
+
+  - Peregrin <https://github.com/pdclab/peregrine>
+    + C++ framework
 
   - DSL in DotMotif <https://github.com/aplbrain/dotmotif/wiki/Getting-Started>
-    - Lacks variable-length path representation?
-    - Lacks metadata on either entities or relations?
+    + Lacks variable-length path representation?
+    + Lacks metadata on either entities or relations?
 
 
-Q: Would topological methods, e.g., _sheaf theory_, provide useful formalisms for general descriptions?
+Q: Could topological methods provide useful formalisms for general descriptions?
+
+  - Sheaf Theory -- from a problematic project, though widely cited for analysis
 
 
 Q: Can we reuse controlled vocabularies related to the data sources and use cases? 
@@ -51,6 +60,9 @@ Q: Can we reuse controlled vocabularies related to the data sources and use case
 
 
 ## references
+
+In general, see the HF collection for papers published on Arxiv:
+https://huggingface.co/papers/2305.19987>
 
 "Financial Crime and Corruption Network Motifs"  
 Russell Jurney (2024-10-02)  
@@ -83,6 +95,18 @@ Gal Chechik, et al.  (2008-11-25)
 "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
 Jordan Matelsky, et al. (2021-06-21)  
 <https://www.nature.com/articles/s41598-021-91025-5>
+
+"InGram: Inductive Knowledge Graph Embedding via Relation Graphs"  
+Jaejun Lee, et al. (2023-05-31)
+<https://arxiv.org/abs/2305.19987>
+
+"Graphlets correct for the topological information missed by random walks"  
+Sam Windels, et al., (2024-05-23)
+<https://arxiv.org/abs/2405.14194>
+
+"Peregrine: A Pattern-Aware Graph Mining System"  
+Kasra Jamshidi, et al., (2020-04-04)  
+<https://arxiv.org/abs/2004.02369>
 
 "OFFER: A Motif Dimensional Framework for Network Representation"  
 Shuo Yu, et al. (2020-08-27)  
