@@ -1,7 +1,9 @@
 
 ## process abstraction
 
-Based on configuration of distributions for fraud kinds and rates:
+Based on configuration of distributions for:
+  - network size and shape
+  - fraud kinds and rates
 
   1. Load entities for people
      - sample from distribution for inclusion in cliques
@@ -32,7 +34,7 @@ Based on configuration of distributions for fraud kinds and rates:
 
 ## outstanding questions
 
-Q: How should we represent network motifs?
+**Q:** How should we represent network motifs?
 
   - Cypher paths subset in GraphFrames <https://github.com/Graphlet-AI/graphml-class/blob/main/graphml_class/stats/motif.py>
     + Seems ginormous and slow, with loads of dependencies?
@@ -61,113 +63,115 @@ Q: How should we represent network motifs?
     + Lacks metadata on either entities or relations?
 
 
-Q: Could topological methods provide useful formalisms for general descriptions?
+**Q:** Could topological methods provide useful formalisms for general descriptions?
 
   - Sheaf Theory -- from a problematic project, though widely cited for analysis
 
 
-Q: Can we reuse controlled vocabularies related to the data sources and use cases? 
+**Q:** Can we reuse _controlled vocabularies_ related to typical data sources and use cases?
 
   - FollowTheMoney <https://followthemoney.tech/explorer/>
 
 
 ## references
 
-In general, see the HF collection for papers published on Arxiv:
+In general, see the HF collection for papers which have been published on _Arxiv_:
 https://huggingface.co/papers/2305.19987>
 
-"Financial Crime and Corruption Network Motifs"  
+Other helpful sources include:
+
+> "Financial Crime and Corruption Network Motifs"  
 Russell Jurney (2024-10-02)  
 <https://blog.graphlet.ai/financial-crime-and-corruption-network-motifs-4cf2e8e10eb5>
 
-"Walks, Paths, Circuits, and Cycles"  
+> "Walks, Paths, Circuits, and Cycles"  
 Jennifer Shloming (2022-09-24)  
 <https://jennifer_shloming.gitlab.io/intro-graph-theory/walks-paths-circuits-and-cycles.html>
 
-"Graph Levels of Detail"  
+> "Graph Levels of Detail"  
 Paco Nathan (2023-11-12)
 <https://blog.derwen.ai/graph-levels-of-detail-ea4226abba55>
 
-"Curating Grounded Synthetic Data with Global Perspectives for Equitable AI"  
+> "Curating Grounded Synthetic Data with Global Perspectives for Equitable AI"  
 Elin Törnquist, Rob Caulk (2024-06-18)  
 <https://arxiv.org/abs/2406.10258>
 
-"Cypher Manual: Patterns"  
+> "Cypher Manual: Patterns"  
 Neo4j  
 <https://neo4j.com/docs/cypher-manual/current/patterns/>
 
-"Realistic Synthetic Graph Generation"  
+> "Realistic Synthetic Graph Generation"  
 Christina Eleftheriou (2024-03-04)  
 <http://bit.ly/4h4qb44>
 
-"Activity motifs reveal principles of timing in transcriptional control of the yeast metabolic network"  
+> "Representations of Networks"
+Eric Bridgeford, et al. (2022)
+<https://docs.neurodata.io/graph-stats-book/representations/ch4/network-representations.html>
+
+> "Activity motifs reveal principles of timing in transcriptional control of the yeast metabolic network"  
 Gal Chechik, et al.  (2008-11-25)
 <https://pmc.ncbi.nlm.nih.gov/articles/PMC2651818/>
 
-"DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
+> "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
 Jordan Matelsky, et al. (2021-06-21)  
 <https://www.nature.com/articles/s41598-021-91025-5>
 
-"InGram: Inductive Knowledge Graph Embedding via Relation Graphs"  
+> "InGram: Inductive Knowledge Graph Embedding via Relation Graphs"  
 Jaejun Lee, et al. (2023-05-31)
 <https://arxiv.org/abs/2305.19987>
 
-"Graphlets correct for the topological information missed by random walks"  
+> "Graphlets correct for the topological information missed by random walks"  
 Sam Windels, et al., (2024-05-23)
 <https://arxiv.org/abs/2405.14194>
 
-"Peregrine: A Pattern-Aware Graph Mining System"  
+> "Peregrine: A Pattern-Aware Graph Mining System"  
 Kasra Jamshidi, et al., (2020-04-04)  
 <https://arxiv.org/abs/2004.02369>
 
-"OFFER: A Motif Dimensional Framework for Network Representation"  
+> "OFFER: A Motif Dimensional Framework for Network Representation"  
 Shuo Yu, et al. (2020-08-27)  
 <https://arxiv.org/abs/2008.12010>
 
-"motifr"  
+> "motifr"  
 Mario Angst, Tim Seppelt (2020-12-30)
 <https://marioangst.github.io/motifr/>
 
-"3 Examples of Motifs with Spark GraphFrames"  
+> "3 Examples of Motifs with Spark GraphFrames"  
 Steve Russo (2022-06-17)  
 <https://betterprogramming.pub/3-examples-of-motifs-with-spark-graphframes-db873b3fdc8a>
-
-"Representations of Networks"
-Eric Bridgeford, et al. (2022)
-<https://docs.neurodata.io/graph-stats-book/representations/ch4/network-representations.html>
 
 
 ## notify list
 
-Clair Sullivan
+  * Clair Sullivan
 <https://github.com/cj2001>
 
-Brad Rees @ NVIDIA cuGraph
+  * Brad Rees @ NVIDIA cuGraph
 <https://github.com/BradReesWork>
 
-Friedrich Lindenberg @ OpenSanctiosn
+  * Friedrich Lindenberg @ OpenSanctiosn
 <https://github.com/pudo>
 
-Stephen Abbott Pugh @ OpenOwnership
+  * Stephen Abbott Pugh @ OpenOwnership
 <https://github.com/StephenAbbott>
 
-Zornitsa Manolova @ GLEIF
+  * Zornitsa Manolova @ GLEIF
 <https://github.com/GLEIF>
 
-Russ Jurney @ Graphlet.ai
+  * Russ Jurney @ Graphlet.ai
 <https://github.com/rjurney>
 
-Allison Miller
+  * Allison Miller
 <https://www.linkedin.com/feed/update/urn:li:activity:7285305359005569024/>
 
-Amy Hodler @ GraphGeeks.org
+  * Amy Hodler @ GraphGeeks.org
 <https://github.com/amyhodler>
 
-Andreas Kollegger @ Neo4j
+  * Andreas Kollegger @ Neo4j
 <https://github.com/akollegger>
 
-Jean Villedieu @ Linkurious
+  * Jean Villedieu @ Linkurious
 <https://linkurious.com/>
 
-Alan Brown @ Aptitude Global
+  * Alan Brown @ Aptitude Global
 <https://www.aptitudeglobal.com/>
