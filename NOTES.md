@@ -1,11 +1,23 @@
 
 ## process abstraction
 
-  1. Load entities for people in roles, with beneficiary metadata.
+Based on configuration of distributions for fraud kinds and rates:
+
+  1. Load entities for people
+     - sample from distribution for inclusion in cliques
+     - sample from distribution for channel seperation
+     - sample from distribution for anomalies (false positives)
+     - populate roles, beneficiary metadata, etc.
   2. Load entities for shell corp intermediary organizations.
+     - sample from distribution for inclusion in cliques
   3. Load network motif patterns representing fraud tradecraft.
-  4. Simulate a network plus transactions based on all of the above.
-  5. Generate output data in node-link format.
+     - may be overlapping?
+  4. Generate graph elements based on all of the above.
+     - generate entities
+     - generate network
+     - generate transactions
+  5. Serialize output
+     - format: node-link, JSONL, etc.
 
 
 ## misc. requirements
