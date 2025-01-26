@@ -1,5 +1,10 @@
+# KleptoSyn
 
-## process abstraction
+Synthetic data generation for investigative graphs based on network
+motifs which represent patterns of tradecraft.
+
+
+## Process abstraction
 
 Given a configuration of distributions for:
   - network size and shape
@@ -22,10 +27,10 @@ data is:
      - generate network
      - generate transactions
   5. Serialize output
-     - format: node-link, JSONL, etc.
+     - format: node-link, JSONL, Parquet, etc.
 
 
-## misc. requirements
+## Misc. requirements
 
   * We must describe the pathing and relations within graph data in flexible ways.
   * Formally speaking, these tradecraft patterns tend to be _walks_ or _circuits_.
@@ -35,7 +40,7 @@ data is:
   * We probably don't need to delve into the topological math as far as _cohomology_.
 
 
-## outstanding questions
+## Outstanding questions
 
 **Q:** How should we represent network motifs?
 
@@ -76,7 +81,7 @@ data is:
   - FollowTheMoney <https://followthemoney.tech/explorer/>
 
 
-## references
+## References
 
 In general, see the HF collection for papers which have been published on _Arxiv_:
 https://huggingface.co/papers/2305.19987>
@@ -124,7 +129,7 @@ Jaejun Lee, et al. (2023-05-31)
 <https://arxiv.org/abs/2305.19987>
 
 > "Graphlets correct for the topological information missed by random walks"  
-Sam Windels, et al., (2024-05-23)
+Sam Windels, et al., (2024-05-23)  
 <https://arxiv.org/abs/2405.14194>
 
 > "Peregrine: A Pattern-Aware Graph Mining System"  
@@ -144,7 +149,7 @@ Steve Russo (2022-06-17)
 <https://betterprogramming.pub/3-examples-of-motifs-with-spark-graphframes-db873b3fdc8a>
 
 
-## notify list
+## Notification list
 
   * Clair Sullivan
 <https://github.com/cj2001>
