@@ -1,9 +1,12 @@
 
 ## process abstraction
 
-Based on configuration of distributions for:
+Given a configuration of distributions for:
   - network size and shape
   - fraud kinds and rates
+
+A high-level description of a process for generating synthetic graph
+data is:
 
   1. Load entities for people
      - sample from distribution for inclusion in cliques
@@ -65,7 +68,7 @@ Based on configuration of distributions for:
 
 **Q:** Could topological methods provide useful formalisms for general descriptions?
 
-  - Sheaf Theory -- from a problematic project, though widely cited for analysis
+  - _Sheaf theory_ -- from a problematic project, although widely cited for analysis
 
 
 **Q:** Can we reuse _controlled vocabularies_ related to typical data sources and use cases?
@@ -89,7 +92,7 @@ Jennifer Shloming (2022-09-24)
 <https://jennifer_shloming.gitlab.io/intro-graph-theory/walks-paths-circuits-and-cycles.html>
 
 > "Graph Levels of Detail"  
-Paco Nathan (2023-11-12)
+Paco Nathan (2023-11-12)  
 <https://blog.derwen.ai/graph-levels-of-detail-ea4226abba55>
 
 > "Curating Grounded Synthetic Data with Global Perspectives for Equitable AI"  
@@ -105,11 +108,11 @@ Christina Eleftheriou (2024-03-04)
 <http://bit.ly/4h4qb44>
 
 > "Representations of Networks"
-Eric Bridgeford, et al. (2022)
+Eric Bridgeford, et al. (2022)  
 <https://docs.neurodata.io/graph-stats-book/representations/ch4/network-representations.html>
 
 > "Activity motifs reveal principles of timing in transcriptional control of the yeast metabolic network"  
-Gal Chechik, et al.  (2008-11-25)
+Gal Chechik, et al.  (2008-11-25)  
 <https://pmc.ncbi.nlm.nih.gov/articles/PMC2651818/>
 
 > "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
@@ -117,7 +120,7 @@ Jordan Matelsky, et al. (2021-06-21)
 <https://www.nature.com/articles/s41598-021-91025-5>
 
 > "InGram: Inductive Knowledge Graph Embedding via Relation Graphs"  
-Jaejun Lee, et al. (2023-05-31)
+Jaejun Lee, et al. (2023-05-31)  
 <https://arxiv.org/abs/2305.19987>
 
 > "Graphlets correct for the topological information missed by random walks"  
@@ -133,7 +136,7 @@ Shuo Yu, et al. (2020-08-27)
 <https://arxiv.org/abs/2008.12010>
 
 > "motifr"  
-Mario Angst, Tim Seppelt (2020-12-30)
+Mario Angst, Tim Seppelt (2020-12-30)  
 <https://marioangst.github.io/motifr/>
 
 > "3 Examples of Motifs with Spark GraphFrames"  
