@@ -1,7 +1,7 @@
 # KleptoSyn
 
 Synthetic data generation for investigative graphs based on network
-motifs which represent patterns of tradecraft.
+motifs which represent patterns of bad-actor tradecraft.
 
 
 ## Process abstraction
