@@ -47,23 +47,12 @@ TRANSFER_CHUNK: float = 10000.0
 ######################################################################
 ## local function definitions
 
-def report_graph (
-    graph: nx.DiGraph,
-    ) -> None:
-    """foo"""
-    ic(len(graph.nodes))
-    ic(len(graph.edges))
-
-    for src_id, dat in graph.nodes(data = True):
-        ic(src_id, dat)
-
-    for src_id, dst_id, dat in graph.edges(data = True):
-        ic(src_id, dst_id, dat)
-
-
 def eval_names_dataset (
     ) -> None:
-    """foo"""
+    """
+Generate synthetic data about names, based in countries.
+<https://github.com/philipperemy/name-dataset>
+    """
     nd = NameDataset()
     ic(NameWrapper(nd.search("Philippe")).describe)
 
@@ -80,7 +69,10 @@ def eval_names_dataset (
 def scrub_text (
     text: str,
     ) -> typing.Optional[ str ]:
-    """foo"""
+    """
+Scrub text of non-printable characters, typesetting artifacts, UTF-8 errors, etc.
+Courtesy of <https://github.com/DerwenAI/pytextrank>
+    """
     if text is None:
         return None
 
@@ -221,6 +213,22 @@ Load the seed graph from input data files.
                 )
 
     return graph
+
+
+def report_graph (
+    graph: nx.DiGraph,
+    ) -> None:
+    """
+Report measures about the loaded seed graph.
+    """
+    ic(len(graph.nodes))
+    ic(len(graph.edges))
+
+    for src_id, dat in graph.nodes(data = True):
+        ic(src_id, dat)
+
+    for src_id, dst_id, dat in graph.edges(data = True):
+        ic(src_id, dst_id, dat)
 
 
 def dump_graph (
