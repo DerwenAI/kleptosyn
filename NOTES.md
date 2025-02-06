@@ -84,7 +84,7 @@ data is:
 ## References
 
 In general, see the HF collection for papers which have been published on _Arxiv_:
-https://huggingface.co/papers/2305.19987>
+<https://huggingface.co/papers/2305.19987>
 
 Other helpful sources include:
 

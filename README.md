@@ -14,6 +14,24 @@ python3 -m pip install -U pip wheel
 python3 -m pip install -r requirements.txt
 ```
 
+You will also the CLI for Google Cloud to get the input datasets:
+<https://cloud.google.com/storage/docs/discover-object-storage-gcloud>
+
+
+## Load the data
+
+```bash
+gcloud storage cp gs://erkg/starterkit/open-sanctions.json .
+gcloud storage cp gs://erkg/starterkit/open-ownership.json .
+gcloud storage cp gs://erkg/starterkit/export.json .
+```
+
+## Run the demo script
+
+```bash
+./demo.py
+```
+
 
 ## Run the notebooks
 

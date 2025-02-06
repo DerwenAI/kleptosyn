@@ -6,28 +6,21 @@
 Synthetic data generation for investigative graphs based on network
 motifs which represent patterns of bad-actor tradecraft.
 
-Given a configuration of distributions for:
-  - network size and shape
-  - fraud kinds and rates
+Steps (so far):
+  * load slice of OpenSanctions (risk data)
+  * load slice of Open Ownership (link data)
+  * load the Senzing ER results for these datasets
+  * construct a directed graph in `NetworkX` from these connected elements
+  * serialize the graph as JSON in node-link format
+  * partition into subgraphs
+  * use `PyVis` to render an interactive visualization
 
-A high-level description of a process for generating synthetic graph
-data is:
-
-  1. Generate entities for people
-     - sample from distribution for inclusion in cliques
-     - sample from distribution for channel seperation
-     - sample from distribution for anomalies (false positives)
-     - populate roles, beneficiary metadata, etc.
-  2. Generate entities for shell corp intermediary organizations.
-     - sample from distribution for inclusion in cliques
-  3. Load network motif patterns representing fraud tradecraft.
-     - may be overlapping?
-  4. Generate graph elements based on all of the above.
-     - generate entities
-     - generate network
-     - generate transactions
-  5. Serialize output
-     - format: node-link, JSONL, Parquet, etc.
+TODO:
+  - load network motif patterns representing bad-actor tradecraft
+  - generate entities for shell corp intermediary organizations
+     + apply _channel separation_ to obscure beneficial owners
+     + use `name-dataset` and `random-address` to generate intermediares
+  - generate transactions across the motifs (event data)
 """
 
 

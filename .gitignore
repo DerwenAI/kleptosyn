@@ -1,5 +1,10 @@
 # local files
 *~
+export.json
+graph.json
+networkx-pyvis.html
+open-ownership.json
+open-sanctions.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
