@@ -90,7 +90,9 @@ def scrub_text (
 def get_name (
     dat: dict,
     ) -> str:
-    """foo"""
+    """
+Extract names from the input data records.
+    """
     try:
         for name_rec in dat["NAMES"]:
             if "PRIMARY_NAME_ORG" in name_rec:
@@ -115,7 +117,9 @@ def get_name (
 def get_addr (
     dat: dict,
     ) -> typing.Optional[ str ]:
-    """foo"""
+    """
+Extract addresses from the input data records.
+    """
     try:
         if "ADDRESSES" in dat:
             for addr_rec in dat["ADDRESSES"]:
@@ -132,48 +136,45 @@ def get_addr (
 
 
 def load_data (
+    graph: nx.DiGraph,
+    dat_file: pathlib.Path,
+    ) -> None:
+    """
+Load a Senzing formatted JSON dataset.
+    """
+    with open(dat_file, "r", encoding = "utf-8") as fp:
+        for line in fp:
+            dat: dict = json.loads(line)
+            rec_id: str = dat["RECORD_ID"]
+
+            graph.add_node(
+                rec_id,
+                kind = "data",
+                name = scrub_text(get_name(dat)),
+                addr = scrub_text(get_addr(dat)),
+            )
+
+
+def load_graph (
     ) -> nx.DiGraph:
-    """load_data"""
+    """
+Load the seed graph from input data files.
+    """
     graph: nx.DiGraph = nx.DiGraph()
 
-    ## load data from OpenSanctions
-    os_file: pathlib.Path = pathlib.Path("open-sanctions.json")
-    
-    with open(os_file, "r", encoding = "utf-8") as fp:
-        for line in fp:
-            dat: dict = json.loads(line)
-            rec_id: str = dat["RECORD_ID"]
+    # load data Senzing-formatted JSON
+    #   - OpenSanctions (risk data)
+    #   - Open Ownership (link data)
+    load_data(graph, pathlib.Path("open-sanctions.json"))
+    load_data(graph, pathlib.Path("open-ownership.json"))
 
-            graph.add_node(
-                rec_id,
-                kind = "data",
-                name = scrub_text(get_name(dat)),
-                addr = scrub_text(get_addr(dat)),
-            )
-
-    ## load data from Open Ownership
-    os_file: pathlib.Path = pathlib.Path("open-ownership.json")
-    
-    with open(os_file, "r", encoding = "utf-8") as fp:
-        for line in fp:
-            dat: dict = json.loads(line)
-            rec_id: str = dat["RECORD_ID"]
-
-            graph.add_node(
-                rec_id,
-                kind = "data",
-                name = scrub_text(get_name(dat)),
-                addr = scrub_text(get_addr(dat)),
-            )
-
-    ## load the ER export from Senzing
+    # load the ER export from Senzing
     er_export_file: pathlib.Path = pathlib.Path("export.json")
 
     with open(er_export_file, "r", encoding = "utf-8") as fp:
         for line in fp:
             dat: dict = json.loads(line)
             ent_id: str = "sz_" + str(dat["RESOLVED_ENTITY"]["ENTITY_ID"]).strip()
-            #ic(ent_id, dat)
 
             if ent_id not in graph.nodes:
                 graph.add_node(
@@ -186,7 +187,6 @@ def load_data (
 
             # link to resolved data records
             for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
-                #ic(ent_id, dat_rec)
                 dat_src = dat_rec["DATA_SOURCE"]
                 rec_id = dat_rec["RECORD_ID"]
 
@@ -204,7 +204,6 @@ def load_data (
 
             # link to related entities
             for rel_rec in dat["RELATED_ENTITIES"]:
-                #ic(rel_rec)
                 rel_id: str = "sz_" + str(rel_rec["ENTITY_ID"]).strip()
 
                 if rel_id not in graph.nodes:
@@ -229,7 +228,9 @@ def dump_graph (
     *,
     graph_file: pathlib.Path = pathlib.Path("graph.json"),
     ) -> None:
-    """serialize the graph"""
+    """
+Serialize the seed graph.
+    """
     with open(graph_file, "w", encoding = "utf-8") as fp:
         dat: dict = nx.node_link_data(
             graph,
@@ -249,10 +250,10 @@ def dump_graph (
 if __name__ == "__main__":
     #eval_names_dataset()
 
-    graph: nx.DiGraph = load_data()
+    graph: nx.DiGraph = load_graph()
     dump_graph(graph)
 
-    sys.exit(0)
+    #sys.exit(0)
 
     ## review how much data got linked
     report_graph(graph)
