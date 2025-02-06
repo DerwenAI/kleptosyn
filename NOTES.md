@@ -24,39 +24,14 @@ Combined annual B2B + B2B is approximately $150T/year, so the dark
 money transfers are approximately 2% of total.
 
 
-## Process abstraction
-
-Given a configuration of distributions for:
-  - network size and shape
-  - fraud kinds and rates
-
-A high-level description of a process for generating synthetic graph
-data is:
-
-  1. Load entities for people
-     - sample from distribution for inclusion in cliques
-     - sample from distribution for channel seperation
-     - sample from distribution for anomalies (false positives)
-     - populate roles, beneficiary metadata, etc.
-  2. Load entities for shell corp intermediary organizations.
-     - sample from distribution for inclusion in cliques
-  3. Load network motif patterns representing fraud tradecraft.
-     - may be overlapping?
-  4. Generate graph elements based on all of the above.
-     - generate entities
-     - generate network
-     - generate transactions
-  5. Serialize output
-     - format: node-link, JSONL, Parquet, etc.
-
-
 ## Misc. requirements
 
   * We must describe the pathing and relations within graph data in flexible ways.
   * Formally speaking, these tradecraft patterns tend to be _walks_ or _circuits_.
+  * Money transfers (event data) introduce stateful, temporal aspects to the graph.
   * Tradecraft motifs are not merely data queries, nor merely topological census.
   * Algebraic geometry, i.e., using an adjacency matrix, does not provide rich enough annotation.
-  * We might adapt approaches from life sciences, e.g., _activity motifs_.
+  * We might adapt approaches from life sciences, e.g., _activity motifs_, albeit these are static.
   * We probably don't need to delve into the topological math as far as _cohomology_.
 
 
@@ -90,6 +65,10 @@ data is:
     + Lacks variable-length path representation?
     + Lacks metadata on either entities or relations?
 
+
+**Q:** Network motifs are static patterns; how can we model the stateful, temporal aspects of tradecraft?
+  - Borrow techniques from speech recognition?
+  - Wavelets, other time-series analysis
 
 **Q:** Could topological methods provide useful formalisms for general descriptions?
 
@@ -167,6 +146,32 @@ Mario Angst, Tim Seppelt (2020-12-30)
 > "3 Examples of Motifs with Spark GraphFrames"  
 Steve Russo (2022-06-17)  
 <https://betterprogramming.pub/3-examples-of-motifs-with-spark-graphframes-db873b3fdc8a>
+
+
+## Process abstraction
+
+Given a configuration of distributions for:
+  - network size and shape
+  - fraud kinds and rates
+
+A high-level description of a process for generating synthetic graph
+data is:
+
+  1. Load entities for people
+     - sample from distribution for inclusion in cliques
+     - sample from distribution for channel seperation
+     - sample from distribution for anomalies (false positives)
+     - populate roles, beneficiary metadata, etc.
+  2. Load entities for shell corp intermediary organizations.
+     - sample from distribution for inclusion in cliques
+  3. Load network motif patterns representing fraud tradecraft.
+     - may be overlapping?
+  4. Generate graph elements based on all of the above.
+     - generate entities
+     - generate network
+     - generate transactions
+  5. Serialize output
+     - format: node-link, JSONL, Parquet, etc.
 
 
 ## Notification list
