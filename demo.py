@@ -39,8 +39,9 @@ from icecream import ic  # type: ignore  # pylint: disable=E0401
 from names_dataset import NameDataset, NameWrapper
 import networkx as nx
 
-
+APPROX_FRAUD_RATE: float = 0.02
 MAX_MATCH_LEVEL: float = 11.0
+TRANSFER_CHUNK: float = 10000.0
 
 
 ######################################################################
@@ -130,12 +131,10 @@ def get_addr (
         sys.exit(0)
 
 
-######################################################################
-## main entry point
-
-if __name__ == "__main__":
+def load_data (
+    ) -> nx.DiGraph:
+    """load_data"""
     graph: nx.DiGraph = nx.DiGraph()
-    #eval_names_dataset()
 
     ## load data from OpenSanctions
     os_file: pathlib.Path = pathlib.Path("open-sanctions.json")
@@ -222,9 +221,15 @@ if __name__ == "__main__":
                     prob = int(rel_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
                 )
 
-    ## serialize the graph
-    graph_file: pathlib.Path = pathlib.Path("graph.json")
+    return graph
 
+
+def dump_graph (
+    graph: nx.DiGraph,
+    *,
+    graph_file: pathlib.Path = pathlib.Path("graph.json"),
+    ) -> None:
+    """serialize the graph"""
     with open(graph_file, "w", encoding = "utf-8") as fp:
         dat: dict = nx.node_link_data(
             graph,
@@ -236,6 +241,16 @@ if __name__ == "__main__":
             fp,
             indent = 2,
         )
+    
+
+######################################################################
+## main entry point
+
+if __name__ == "__main__":
+    #eval_names_dataset()
+
+    graph: nx.DiGraph = load_data()
+    dump_graph(graph)
 
     sys.exit(0)
 
