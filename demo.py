@@ -21,6 +21,9 @@ TODO:
      + apply _channel separation_ to obscure beneficial owners
      + use `name-dataset` and `random-address` to generate intermediares
   - generate transactions across the motifs (event data)
+  - generate legit transactions as decoys (~98%)
+  - serialize as CSV files
+  - have Clair eval to run ER + KG + algos to spot the fraud
 """
 
 

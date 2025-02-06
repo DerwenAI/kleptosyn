@@ -4,6 +4,26 @@ Synthetic data generation for investigative graphs based on network
 motifs which represent patterns of bad-actor tradecraft.
 
 
+## Approximated fraud rate
+
+> estimated $3T/year in dark money flows.
+
+> daily business-to-business (B2B) global payment volume is estimated
+  at $328 billion, while the combined global business-to-consumer
+  (B2C) and consumer-to-consumer (C2C) market volume is just over $82
+  billion per day.
+
+> UK banks: transactions over £8,800 (€10,000) may be flagged for
+  further checks.
+
+> US banks: If you send payments valued at 10,000 USD or more, your
+  bank or transfer provider will need to report these transfers to the
+  Financial Crimes Enforcement Network (FinCEN)
+
+Combined annual B2B + B2B is approximately $150T/year, so the dark
+money transfers are approximately 2% of total.
+
+
 ## Process abstraction
 
 Given a configuration of distributions for:
