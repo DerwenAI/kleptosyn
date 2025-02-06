@@ -1,4 +1,4 @@
-# klepto_syn
+# kleptosyn
 
 Synthetic data generation for investigative graphs based on network motifs
 
