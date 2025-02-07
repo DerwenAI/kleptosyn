@@ -29,6 +29,7 @@ TODO:
 
 
 from collections import defaultdict
+import itertools
 import json
 import pathlib
 import random
@@ -294,28 +295,6 @@ Select one viable "bad actor" network from among the subgraphs
     return random.choice(bad_cliques)
 
 
-def generate_paths (
-    graph: nx.DiGraph,
-    clique: list,
-    *,
-    sample_size: int = 3,
-    min_len_path: int = 2,
-    ) -> typing.List[ typing.List[ int ]]:
-    """
-Generate paths within each subgraph.
-    """
-    return random.sample(
-        [
-            path
-            for src_id in clique
-            for dst_id, path in nx.shortest_path(graph, source = src_id).items()
-            for len_path in [ len(path) ]
-            if len_path > min_len_path
-        ],
-        sample_size,
-    )
-
-
 ######################################################################
 ## main entry point
 
@@ -349,11 +328,21 @@ if __name__ == "__main__":
         dat: dict = graph.nodes[node_id]
         ic(node_id, dat)
 
-    sys.exit(0)
+    owner: str = bad_clique[0]
+    shell_corps: list = bad_clique[1:]
 
-    ## generate paths within the subgraphs
-    paths = generate_paths(graph, bad_clique)
-    ic(paths)
+    ic(owner, shell_corps)
+
+    ## generate paths among the shell corps
+    paths = [
+        path
+        for path in itertools.permutations(shell_corps, r = MIN_CLIQUE_SIZE)
+    ]
+
+    for path in random.sample(paths, 4):
+        ic(path)
+
+    sys.exit(0)
 
     ## sample distributions for money transfer: amount, timing
     rng = np.random.default_rng()
