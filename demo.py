@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright ©2025 Senzing, Inc. All rights reserved.
 
@@ -31,6 +31,7 @@ TODO:
 from collections import defaultdict
 import json
 import pathlib
+import random
 import sys
 import traceback
 import typing
@@ -39,9 +40,12 @@ import unicodedata
 from icecream import ic  # type: ignore  # pylint: disable=E0401
 from names_dataset import NameDataset, NameWrapper
 import networkx as nx
+import numpy as np
+
 
 APPROX_FRAUD_RATE: float = 0.02
 MAX_MATCH_LEVEL: float = 11.0
+MIN_CLIQUE_SIZE: int = 3
 TRANSFER_CHUNK: float = 10000.0
 
 
@@ -145,6 +149,7 @@ Load a Senzing formatted JSON dataset.
                 kind = "data",
                 name = scrub_text(get_name(dat)),
                 addr = scrub_text(get_addr(dat)),
+                noun = dat["RECORD_TYPE"].lower(),
             )
 
 
@@ -175,8 +180,9 @@ Load the seed graph from input data files.
                     kind = "entity",
                 )
 
-            ent_desc: typing.Optional[ str ] = None
             ent_addr: typing.Optional[ dict ] = None
+            ent_desc: typing.Optional[ str ] = None
+            ent_noun: typing.Optional[ str ] = None
 
             # link to resolved data records
             for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
@@ -191,9 +197,15 @@ Load the seed graph from input data files.
                     prob = int(dat_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
                 )
 
-                ent_desc = dat_rec["ENTITY_DESC"]
+                desc: str = scrub_text(dat_rec["ENTITY_DESC"]).strip()
+
+                if len(desc) > 0:
+                    ent_desc = desc
+
+                ent_noun = graph.nodes[rec_id]["noun"]
 
             graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
+            graph.nodes[ent_id]["noun"] = ent_noun
 
             # link to related entities
             for rel_rec in dat["RELATED_ENTITIES"]:
@@ -251,7 +263,58 @@ Serialize the seed graph.
             fp,
             indent = 2,
         )
-    
+
+
+def select_bad_actor (
+    graph: nx.DiGraph,
+    ) -> typing.List[ str ]:
+    """
+Select one viable "bad actor" network from among the subgraphs
+    """
+    bad_cliques: list = []
+
+    for clique in nx.weakly_connected_components(graph):
+        owners: list = sorted([
+            ( graph.nodes[node_id]["rank"], node_id, )
+            for node_id in clique
+            if graph.nodes[node_id]["kind"] == "entity"
+            if graph.nodes[node_id]["noun"] == "person"
+        ], reverse = True)
+
+        shells: list = [
+            node_id
+            for node_id in clique
+            if graph.nodes[node_id]["kind"] == "entity"
+            if graph.nodes[node_id]["noun"] == "organization"
+        ]
+
+        if len(owners) > 0 and len(shells) >= MIN_CLIQUE_SIZE:
+            bad_cliques.append([ owners[0][1] ] + shells)
+
+    return random.choice(bad_cliques)
+
+
+def generate_paths (
+    graph: nx.DiGraph,
+    clique: list,
+    *,
+    sample_size: int = 3,
+    min_len_path: int = 2,
+    ) -> typing.List[ typing.List[ int ]]:
+    """
+Generate paths within each subgraph.
+    """
+    return random.sample(
+        [
+            path
+            for src_id in clique
+            for dst_id, path in nx.shortest_path(graph, source = src_id).items()
+            for len_path in [ len(path) ]
+            if len_path > min_len_path
+        ],
+        sample_size,
+    )
+
 
 ######################################################################
 ## main entry point
@@ -260,16 +323,54 @@ if __name__ == "__main__":
     #eval_names_dataset()
 
     graph: nx.DiGraph = load_graph()
-    dump_graph(graph)
 
+    for node_id, rank in nx.eigenvector_centrality(graph).items():
+        graph.nodes[node_id]["rank"] = rank
+
+    ## repair the names for each resolved entity
+    for node_id, dat in graph.nodes(data = True):
+        if dat["kind"] == "entity" and dat["noun"] == "person" and dat["name"] is None:
+            for neigh_id in graph.neighbors(node_id):
+                rec_dat: dict = graph.nodes[neigh_id]
+
+                if rec_dat["kind"] == "data":
+                    graph.nodes[node_id]["name"] = rec_dat["name"]
+
+    dump_graph(graph)
     #sys.exit(0)
 
     ## review how much data got linked
-    report_graph(graph)
+    #report_graph(graph)
 
-    ## examine the subgraphs
-    for clique in nx.weakly_connected_components(graph):
-        if len(clique) > 4:
-            print(len(clique), clique)
+    ## select one subgraph as the bad-actor network
+    bad_clique: list = select_bad_actor(graph)
 
-    # sample from entities distribution for inclusion in cliques
+    for node_id in bad_clique:
+        dat: dict = graph.nodes[node_id]
+        ic(node_id, dat)
+
+    sys.exit(0)
+
+    ## generate paths within the subgraphs
+    paths = generate_paths(graph, bad_clique)
+    ic(paths)
+
+    ## sample distributions for money transfer: amount, timing
+    rng = np.random.default_rng()
+
+    foo = list(rng.normal(
+        loc = TRANSFER_CHUNK / 2,
+        scale = TRANSFER_CHUNK / 4,
+        size = 1,
+    ))[0]
+
+    ic(float(TRANSFER_CHUNK - foo))
+    
+    DAYS: int = 2
+
+    wait_time: float = list(rng.exponential(
+        scale = DAYS,
+        size = len(bad_clique)
+    ))
+
+    ic(wait_time)
