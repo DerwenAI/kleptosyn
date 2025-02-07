@@ -11,8 +11,15 @@ Steps (so far):
   * load slice of Open Ownership (link data)
   * load the Senzing ER results for these datasets
   * construct a directed graph in `NetworkX` from these connected elements
+    + repair the names for each resolved entity (inherited from data records)
   * serialize the graph as JSON in node-link format
+  * measure centrality to rank actors within each subgraph
   * partition into subgraphs
+  * select N subgraphs as the bad-actor networks
+    + identify the top-ranked person as the ultimate beneficial owner
+    + identify the set of shell corporations engaging in B2B money transfers
+    + generate paths among the shell corps
+    + sample distributions to simulate money transfers: timing, amounts
   * use `PyVis` to render an interactive visualization
 
 TODO:
@@ -48,6 +55,8 @@ APPROX_FRAUD_RATE: float = 0.02
 MAX_MATCH_LEVEL: float = 11.0
 MIN_CLIQUE_SIZE: int = 3
 TRANSFER_CHUNK: float = 10000.0
+
+RNG: np.random.Generator = np.random.default_rng()
 
 
 ######################################################################
@@ -295,6 +304,33 @@ Select one viable "bad actor" network from among the subgraphs
     return random.choice(bad_cliques)
 
 
+def rng_gaussian (
+    *,
+    mean: float = 0.0,
+    stdev: float = 1.0,
+    size: int = 100,
+    ) -> typing.Iterator[ float ]:
+    """
+Sample random numbers from a Gaussian distribution.
+    """
+    for sample in RNG.normal(loc = mean, scale = stdev, size = (size, 1)):
+        for num in sample:
+            yield float(num)
+
+
+def rng_exponential (
+    *,
+    scale: float = 1.0,
+    size: int = 100,
+    ) -> typing.Iterator[ float ]:
+    """
+Sample random numbers from an Exponential distribution.
+    """
+    for sample in RNG.exponential(scale = scale, size = (size, 1)):
+        for num in sample:
+            yield float(num)
+
+
 ######################################################################
 ## main entry point
 
@@ -328,10 +364,10 @@ if __name__ == "__main__":
         dat: dict = graph.nodes[node_id]
         ic(node_id, dat)
 
-    owner: str = bad_clique[0]
+    ubo_person: str = bad_clique[0]
     shell_corps: list = bad_clique[1:]
 
-    ic(owner, shell_corps)
+    ic(ubo_person, shell_corps)
 
     ## generate paths among the shell corps
     paths = [
@@ -342,24 +378,20 @@ if __name__ == "__main__":
     for path in random.sample(paths, 4):
         ic(path)
 
-    sys.exit(0)
 
-    ## sample distributions for money transfer: amount, timing
-    rng = np.random.default_rng()
-
-    foo = list(rng.normal(
-        loc = TRANSFER_CHUNK / 2,
-        scale = TRANSFER_CHUNK / 4,
-        size = 1,
-    ))[0]
-
-    ic(float(TRANSFER_CHUNK - foo))
-    
+    ## sample distributions to simulate money transfers: timing, amounts
     DAYS: int = 2
 
-    wait_time: float = list(rng.exponential(
-        scale = DAYS,
-        size = len(bad_clique)
-    ))
+    for i, sample in enumerate(rng_gaussian(mean = TRANSFER_CHUNK / 2, stdev = TRANSFER_CHUNK / 4)):
+        if i > 10:
+            break
+        else:
+            ic(i, TRANSFER_CHUNK - sample)
 
-    ic(wait_time)
+    for i, sample in enumerate(rng_exponential(scale = DAYS)):
+        if i > 10:
+            break
+        else:
+            ic(i, sample)
+    
+

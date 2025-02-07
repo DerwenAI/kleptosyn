@@ -66,9 +66,9 @@ money transfers are approximately 2% of total.
     + Lacks metadata on either entities or relations?
 
 
-**Q:** Network motifs are static patterns; how can we model the stateful, temporal aspects of tradecraft?
+**Q:** Motifs are static patterns; how can we model the stateful, temporal aspects of tradecraft?
   - Borrow techniques from speech recognition?
-  - Wavelets, other time-series analysis
+  - Wavelets, PDEs, or other time-series analysis
 
 **Q:** Could topological methods provide useful formalisms for general descriptions?
 
