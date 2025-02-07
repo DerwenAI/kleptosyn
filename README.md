@@ -24,6 +24,8 @@ You will also the CLI for Google Cloud to get the input datasets:
 gcloud storage cp gs://erkg/starterkit/open-sanctions.json .
 gcloud storage cp gs://erkg/starterkit/open-ownership.json .
 gcloud storage cp gs://erkg/starterkit/export.json .
+
+wget https://raw.githubusercontent.com/cj2001/senzing_occrp_mapping_demo/refs/heads/main/occrp_17k.csv
 ```
 
 ## Run the demo script

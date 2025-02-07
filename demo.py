@@ -54,7 +54,17 @@ import numpy as np
 APPROX_FRAUD_RATE: float = 0.02
 MAX_MATCH_LEVEL: float = 11.0
 MIN_CLIQUE_SIZE: int = 3
-TRANSFER_CHUNK: float = 10000.0
+
+# transaction distributions derived from `occrp.ipynb`
+INTER_ARRIVAL_MEDIAN: float = 8.7
+INTER_ARRIVAL_STDEV: float = 32.745006
+
+TRANSFER_CHUNK_MEDIAN: float = 1.963890e+05
+TRANSFER_CHUNK_STDEV: float = 5.301957e+05
+
+TRANSFER_TOTAL_MEDIAN: float = 1.408894e+06
+TRANSFER_TOTAL_STDEV: float = 8.014517e+07
+
 
 RNG: np.random.Generator = np.random.default_rng()
 
@@ -331,6 +341,19 @@ Sample random numbers from an Exponential distribution.
             yield float(num)
 
 
+def rng_poisson (
+    *,
+    lambda_: float = 1.0,
+    size: int = 100,
+    ) -> typing.Iterator[ float ]:
+    """
+Sample random numbers from a Poisson distribution.
+    """
+    for sample in RNG.poisson(lam = lambda_, size = (size, 1)):
+        for num in sample:
+            yield float(num)
+
+
 ######################################################################
 ## main entry point
 
@@ -380,18 +403,15 @@ if __name__ == "__main__":
 
 
     ## sample distributions to simulate money transfers: timing, amounts
-    DAYS: int = 2
-
-    for i, sample in enumerate(rng_gaussian(mean = TRANSFER_CHUNK / 2, stdev = TRANSFER_CHUNK / 4)):
+    for i, amount in enumerate(rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 4.0)):
         if i > 10:
             break
         else:
-            ic(i, TRANSFER_CHUNK - sample)
+            amount = TRANSFER_CHUNK_MEDIAN - amount
+            ic(i, amount)
 
-    for i, sample in enumerate(rng_exponential(scale = DAYS)):
+    for i, delay in enumerate(rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)):
         if i > 10:
             break
         else:
-            ic(i, sample)
-    
-
+            ic(i, delay)
