@@ -25,13 +25,15 @@ Steps (so far):
      + parameterize the timing and chunking
 
 TODO:
-  - load network motif patterns representing bad-actor tradecraft
-  - generate entities for shell corp intermediary organizations
-     + apply _channel separation_ to obscure beneficial owners
-     + use `name-dataset` and `random-address` to generate intermediares
   - generate legit transactions as decoys (~98%)
   - flatten the graph: serialize records as a set of CSV files
   - have Clair eval to run ER + KG + algos to identify fraud
+
+  - load network motif patterns representing bad-actor tradecraft
+
+  - generate entities for shell corp intermediary organizations
+     + apply _channel separation_ to obscure beneficial owners
+     + use `name-dataset` and `random-address` to generate intermediares
 
 """
 
@@ -552,3 +554,6 @@ if __name__ == "__main__":
     )
 
     ic(df_xact.head())
+
+    xact_file: pathlib.Path = pathlib.Path("transact.csv")
+    df_xact.to_csv(xact_file, sep = "\t", encoding = "utf-8")

@@ -2,6 +2,7 @@
 *~
 azeri.csv
 occrp_17k.csv
+transact.csv
 export.json
 graph.json
 networkx-pyvis.html
