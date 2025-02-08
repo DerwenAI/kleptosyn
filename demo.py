@@ -57,6 +57,7 @@ import pycountry
 
 APPROX_FRAUD_RATE: float = 0.02
 MAX_MATCH_LEVEL: float = 11.0
+MAX_PATH_LEN: int = 7
 MIN_CLIQUE_SIZE: int = 3
 
 # transaction distributions derived from `occrp.ipynb`
@@ -77,6 +78,10 @@ FTM_CLASSES: typing.Dict[ str, str ] = {
     "organization": "ftm:Company",
     "transaction": "ftm:Payment",
 }
+
+SANCTIONED_COUNTRIES: typing.Set[ str ] = set([
+    "RU",
+])
 
 RNG: np.random.Generator = np.random.default_rng()
 
@@ -113,27 +118,54 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
     if text is None:
         return None
 
-    return str(unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8").replace("\u200b", ""))
+    #return str(unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8").replace("\u200b", ""))
+
+    min_scrub: str = unicodedata.normalize("NFKD", text).replace("\u200b", "").strip()
+    max_scrub: str = min_scrub.encode("ascii", "ignore").decode("utf-8").strip()
+
+    if len(max_scrub) < 1:
+        return min_scrub
+
+    return max_scrub
 
 
 def extract_name (
     dat: dict,
+    *,
+    debug: bool = False,
     ) -> str:
     """
 Extract names from the input data records.
     """
     try:
-        for name_rec in dat["NAMES"]:
-            if "PRIMARY_NAME_ORG" in name_rec:
-                return name_rec["PRIMARY_NAME_ORG"]
-            elif name_rec["NAME_TYPE"] == "PRIMARY":
-                if "NAME_ORG" in name_rec:
-                    return name_rec["NAME_ORG"]
-                else:
-                    return name_rec["NAME_FULL"]
-            else:
-                ic(name_rec)
-                sys.exit(0)
+        name: typing.Optional[ str ] = None
+
+        if "PRIMARY_NAME_FULL" in dat:
+            name = dat["PRIMARY_NAME_FULL"]
+        else:
+            for rec in dat["NAMES"]:
+                if "NAME_TYPE" in rec and rec["NAME_TYPE"] == "PRIMARY":
+                    if "NAME_FULL" in rec:
+                        name = rec["NAME_FULL"]
+                        break
+                    elif "NAME_ORG" in rec:
+                        name = rec["NAME_ORG"]
+                        break
+                elif "PRIMARY_NAME_ORG" in rec:
+                    name = rec["PRIMARY_NAME_ORG"]
+                    break
+
+        if name is not None:
+            name = scrub_text(name)
+
+            if name == "-" or len(name) < 1:
+                name = None
+        
+        if name is None:
+            print("extract_name DQ:", dat)
+            sys.exit(0)
+
+        return name
 
     except Exception as ex:
         ic(ex)
@@ -145,17 +177,28 @@ Extract names from the input data records.
 
 def extract_addr (
     dat: dict,
+    *,
+    debug: bool = False,
     ) -> typing.Optional[ str ]:
     """
 Extract addresses from the input data records.
     """
     try:
-        if "ADDRESSES" in dat:
-            for addr_rec in dat["ADDRESSES"]:
-                if "ADDR_FULL" in addr_rec:
-                    return addr_rec["ADDR_FULL"]
+        addr: typing.Optional[ str ] = None
 
-        return None
+        if "ADDRESSES" in dat:
+            for rec in dat["ADDRESSES"]:
+                if "ADDR_FULL" in rec:
+                    addr = rec["ADDR_FULL"]
+                    break
+
+        if addr is not None:
+            addr = scrub_text(addr)
+
+            if addr == "-" or len(addr) < 1:
+                addr = None
+        
+        return addr
     except Exception as ex:
         ic(ex)
         traceback.print_exc()
@@ -166,6 +209,8 @@ Extract addresses from the input data records.
 
 def extract_country (
     dat: dict,
+    *,
+    debug: bool = False,
     ) -> typing.Optional[ str ]:
     """
 Extract country codes from the input data records.
@@ -230,8 +275,8 @@ Load a Senzing formatted JSON dataset.
                 rec_id,
                 kind = "data",
                 type = FTM_CLASSES[dat["RECORD_TYPE"].lower()],
-                name = scrub_text(extract_name(dat)),
-                addr = scrub_text(extract_addr(dat)),
+                name = extract_name(dat),
+                addr = extract_addr(dat),
                 country = extract_country(dat),
             )
 
@@ -284,7 +329,7 @@ Load the seed graph from input data files.
 
                 ent_type = graph.nodes[rec_id]["type"]
 
-                desc: str = scrub_text(dat_rec["ENTITY_DESC"]).strip()
+                desc: str = dat_rec["ENTITY_DESC"].strip()
                 country: typing.Optional[ str ] = graph.nodes[rec_id]["country"]
 
                 if len(desc) > 0:
@@ -380,6 +425,7 @@ Select one viable "bad actor" network from among the subgraphs
             for node_id in clique
             if graph.nodes[node_id]["kind"] == "entity"
             if graph.nodes[node_id]["type"] == "ftm:Company"
+            if graph.nodes[node_id]["country"] not in SANCTIONED_COUNTRIES
         ]
 
         if len(owners) > 0 and len(shells) >= MIN_CLIQUE_SIZE:
@@ -455,7 +501,7 @@ if __name__ == "__main__":
 
     ubo_person: str = bad_clique[0]
     shell_corps: list = bad_clique[1:]
-    path_range: typing.List[ int ] = list(range(MIN_CLIQUE_SIZE, min(len(shell_corps) + 1, 10)))
+    path_range: typing.List[ int ] = list(range(MIN_CLIQUE_SIZE, min(len(shell_corps) + 1, MAX_PATH_LEN)))
     total_funds: float = round(rng_gaussian(mean = TRANSFER_TOTAL_MEDIAN / 2.0, stdev = TRANSFER_TOTAL_MEDIAN / 100.0), 2)
 
     ic(ubo_person, total_funds, path_range, shell_corps)
@@ -478,8 +524,10 @@ if __name__ == "__main__":
                 src_id: int = pair[0]
                 dst_id: int = pair[1]
 
-                gen_amount: float = rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 4.0)
+                gen_amount: float = rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 10.0)
                 amount: float = round(TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
+                assert amount > 0.0, f"negative amount: {gen_amount}"
+
                 subtotal += amount
 
                 gen_offset: float = rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)
