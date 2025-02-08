@@ -42,6 +42,7 @@ import itertools
 import json
 import pathlib
 import random
+import re
 import sys
 import traceback
 import typing
@@ -85,6 +86,8 @@ SANCTIONED_COUNTRIES: typing.Set[ str ] = set([
 
 RNG: np.random.Generator = np.random.default_rng()
 
+EMPTY_QUOTE_PAT = re.compile("\".*\"")
+
 
 ######################################################################
 ## local function definitions
@@ -123,7 +126,7 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
     min_scrub: str = unicodedata.normalize("NFKD", text).replace("\u200b", "").strip()
     max_scrub: str = min_scrub.encode("ascii", "ignore").decode("utf-8").strip()
 
-    if len(max_scrub) < 1:
+    if len(max_scrub) < 1 or EMPTY_QUOTE_PAT.match(max_scrub) is not None:
         return min_scrub
 
     return max_scrub
