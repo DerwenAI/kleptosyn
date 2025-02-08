@@ -66,6 +66,14 @@ TRANSFER_TOTAL_MEDIAN: float = 1.408894e+06
 TRANSFER_TOTAL_STDEV: float = 8.014517e+07
 
 
+# semantics: <https://followthemoney.tech/explorer/>
+# ftm:Person, ftm:Company, ftm:Payment
+FTM_CLASSES: typing.Dict[ str, str ] = {
+    "person": "ftm:Person",
+    "organization": "ftm:Company",
+    "transaction": "ftm:Payment",
+}
+
 RNG: np.random.Generator = np.random.default_rng()
 
 
@@ -169,7 +177,7 @@ Load a Senzing formatted JSON dataset.
                 kind = "data",
                 name = scrub_text(get_name(dat)),
                 addr = scrub_text(get_addr(dat)),
-                noun = dat["RECORD_TYPE"].lower(),
+                type = FTM_CLASSES[dat["RECORD_TYPE"].lower()],
             )
 
 
@@ -202,7 +210,7 @@ Load the seed graph from input data files.
 
             ent_addr: typing.Optional[ dict ] = None
             ent_desc: typing.Optional[ str ] = None
-            ent_noun: typing.Optional[ str ] = None
+            ent_type: typing.Optional[ str ] = None
 
             # link to resolved data records
             for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
@@ -222,10 +230,10 @@ Load the seed graph from input data files.
                 if len(desc) > 0:
                     ent_desc = desc
 
-                ent_noun = graph.nodes[rec_id]["noun"]
+                ent_type = graph.nodes[rec_id]["type"]
 
             graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
-            graph.nodes[ent_id]["noun"] = ent_noun
+            graph.nodes[ent_id]["type"] = ent_type
 
             # link to related entities
             for rel_rec in dat["RELATED_ENTITIES"]:
@@ -298,14 +306,14 @@ Select one viable "bad actor" network from among the subgraphs
             ( graph.nodes[node_id]["rank"], node_id, )
             for node_id in clique
             if graph.nodes[node_id]["kind"] == "entity"
-            if graph.nodes[node_id]["noun"] == "person"
+            if graph.nodes[node_id]["type"] == "ftm:Person"
         ], reverse = True)
 
         shells: list = [
             node_id
             for node_id in clique
             if graph.nodes[node_id]["kind"] == "entity"
-            if graph.nodes[node_id]["noun"] == "organization"
+            if graph.nodes[node_id]["type"] == "ftm:Company"
         ]
 
         if len(owners) > 0 and len(shells) >= MIN_CLIQUE_SIZE:
@@ -365,9 +373,10 @@ if __name__ == "__main__":
     for node_id, rank in nx.eigenvector_centrality(graph).items():
         graph.nodes[node_id]["rank"] = rank
 
-    ## repair the names for each resolved entity
+    ## repair the names for each resolved entity by inheriting up from
+    ## the resolved data records
     for node_id, dat in graph.nodes(data = True):
-        if dat["kind"] == "entity" and dat["noun"] == "person" and dat["name"] is None:
+        if dat["kind"] == "entity" and dat["type"] == "ftm:Person" and dat["name"] is None:
             for neigh_id in graph.neighbors(node_id):
                 rec_dat: dict = graph.nodes[neigh_id]
 
@@ -415,3 +424,4 @@ if __name__ == "__main__":
             break
         else:
             ic(i, delay)
+

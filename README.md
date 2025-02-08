@@ -1,6 +1,17 @@
 # KleptoSyn
 
-Synthetic data generation for investigative graphs based on network motifs
+Synthetic data generation for investigative graphs based on patterns
+of bad-actor tradecraft.
+
+Input data sources:
+
+  * <https://www.opensanctions.org/>
+  * <https://www.openownership.org/>
+  * <https://www.occrp.org/en/project/the-azerbaijani-laundromat/the-raw-data>
+
+Ontologies used:
+
+  * <https://followthemoney.tech/>
 
 
 ## Build an environment
