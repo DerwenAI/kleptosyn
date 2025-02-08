@@ -86,9 +86,220 @@ SANCTIONED_COUNTRIES: typing.Set[ str ] = set([
     "RU",
 ])
 
-RNG: np.random.Generator = np.random.default_rng()
-
 EMPTY_QUOTE_PAT = re.compile("\".*\"")
+
+
+######################################################################
+## class definitions: simulated patterns of tradecraft
+
+class Simulation:
+    """
+Simulated patterns of tradecraft.
+    """
+
+    def __init__ (
+        self,
+        config: dict,
+        ) -> None:
+        """
+Constructor.
+        """
+        self.config: dict = config
+        self.rng: np.random.Generator = np.random.default_rng()
+
+
+    def rng_gaussian (
+        self,
+        *,
+        mean: float = 0.0,
+        stdev: float = 1.0,
+        ) -> float:
+        """
+Sample random numbers from a Gaussian distribution.
+        """
+        return float(self.rng.normal(loc = mean, scale = stdev, size = 1)[0])
+
+
+    def rng_exponential (
+        self,
+        *,
+        scale: float = 1.0,
+        ) -> float:
+        """
+Sample random numbers from an Exponential distribution.
+        """
+        return float(self.rng.exponential(scale = scale, size = 1)[0])
+
+
+    def rng_poisson (
+        self,
+        *,
+        lambda_: float = 1.0,
+        ) -> float:
+        """
+Sample random numbers from a Poisson distribution.
+        """
+        return float(self.rng.poisson(lam = lambda_, size = 1)[0])
+
+
+######################################################################
+## class definitions: network of bad actors
+
+class Network:
+    """
+Network to sample for simulated bad actors.
+    """
+
+    def __init__ (
+        self,
+        config: dict,
+        ) -> None:
+        """
+Constructor.
+        """
+        self.config: dict = config
+        self.graph: nx.DiGraph = nx.DiGraph()
+
+
+    def load_graph (
+        self,
+        *,
+        er_export_file: pathlib.Path = pathlib.Path("export.json"),
+        ) -> None:
+        """
+Load the entity resolution results exported from Senzing.
+        """
+        with open(er_export_file, "r", encoding = "utf-8") as fp:
+            for line in fp:
+                dat: dict = json.loads(line)
+                ent_id: str = "sz_" + str(dat["RESOLVED_ENTITY"]["ENTITY_ID"]).strip()
+
+                if ent_id not in self.graph.nodes:
+                    self.graph.add_node(
+                        ent_id,
+                        kind = "entity",
+                    )
+
+                ent_addr: typing.Optional[ dict ] = None
+                ent_desc: typing.Optional[ str ] = None
+                ent_type: typing.Optional[ str ] = None
+
+                ent_countries: typing.List[ typing.Optional[ str ]] = []
+
+                # link to resolved data records
+                for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
+                    dat_src = dat_rec["DATA_SOURCE"]
+                    rec_id = dat_rec["RECORD_ID"]
+
+                    self.graph.add_edge(
+                        ent_id,
+                        rec_id,
+                        kind = "resolved",
+                        why = scrub_text(dat_rec["MATCH_KEY"]),
+                        prob = int(dat_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
+                    )
+
+                    ent_type = self.graph.nodes[rec_id]["type"]
+
+                    desc: str = dat_rec["ENTITY_DESC"].strip()
+                    country: typing.Optional[ str ] = self.graph.nodes[rec_id]["country"]
+
+                    if len(desc) > 0:
+                        ent_desc = desc
+
+                    if country is not None and len(country) > 0:
+                        ent_countries.append(self.graph.nodes[rec_id]["country"])
+
+                self.graph.nodes[ent_id]["type"] = ent_type
+                self.graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
+
+                country_counts: Counter = Counter(ent_countries)
+
+                if len(country_counts) > 0:
+                    self.graph.nodes[ent_id]["country"] = country_counts.most_common()[0][0]
+
+                # link to related entities
+                for rel_rec in dat["RELATED_ENTITIES"]:
+                    rel_id: str = "sz_" + str(rel_rec["ENTITY_ID"]).strip()
+
+                    if rel_id not in self.graph.nodes:
+                        self.graph.add_node(
+                            rel_id,
+                            kind = "entity",
+                        )
+
+                    self.graph.add_edge(
+                        ent_id,
+                        rel_id,
+                        kind = "related",
+                        why = scrub_text(rel_rec["MATCH_KEY"]),
+                        prob = int(rel_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
+                    )
+
+    def load (
+        self,
+        ) -> None:
+        """
+Load the "risk" and "link" data, plus their exported entity resolution,
+to construct a graph to sample as simulated bad actors.
+
+  - OpenSanctions (risk data)
+  - Open Ownership (link data)
+        """
+        load_data(self.graph, pathlib.Path("open-sanctions.json"))
+        load_data(self.graph, pathlib.Path("open-ownership.json"))
+
+        self.load_graph()
+
+        for node_id, rank in nx.eigenvector_centrality(self.graph).items():
+            self.graph.nodes[node_id]["rank"] = rank
+
+        # repair the names for each resolved entity by inheriting up
+        # from the resolved data records
+        for node_id, dat in self.graph.nodes(data = True):
+            if dat["kind"] == "entity" and dat["type"] == "ftm:Person" and dat["name"] is None:
+                for neigh_id in self.graph.neighbors(node_id):
+                    rec_dat: dict = self.graph.nodes[neigh_id]
+
+                    if rec_dat["kind"] == "data":
+                        self.graph.nodes[node_id]["name"] = rec_dat["name"]
+
+
+    def dump (
+        self,
+        *,
+        graph_file: pathlib.Path = pathlib.Path("graph.json"),
+        ) -> None:
+        """
+Serialize the bad network.
+        """
+        with open(graph_file, "w", encoding = "utf-8") as fp:
+            dat: dict = nx.node_link_data(
+                self.graph,
+                edges = "edges", # for forward compatibility
+            )
+
+            json.dump(
+                dat,
+                fp,
+                indent = 2,
+            )
+
+
+    def report (
+        self,
+        ) -> None:
+        """
+Report measures for the loaded network.
+        """
+        ic(len(self.graph.nodes))
+        ic(len(self.graph.edges))
+
+        for src_id, dat in self.graph.nodes(data = True):
+            ic(src_id, dat)
+
+        for src_id, dst_id, dat in self.graph.edges(data = True):
+            ic(src_id, dst_id, dat)
 
 
 ######################################################################
@@ -286,129 +497,6 @@ Load a Senzing formatted JSON dataset.
             )
 
 
-def load_graph (
-    ) -> nx.DiGraph:
-    """
-Load the seed graph from input data files.
-    """
-    graph: nx.DiGraph = nx.DiGraph()
-
-    # load data Senzing-formatted JSON
-    #   - OpenSanctions (risk data)
-    #   - Open Ownership (link data)
-    load_data(graph, pathlib.Path("open-sanctions.json"))
-    load_data(graph, pathlib.Path("open-ownership.json"))
-
-    # load the ER export from Senzing
-    er_export_file: pathlib.Path = pathlib.Path("export.json")
-
-    with open(er_export_file, "r", encoding = "utf-8") as fp:
-        for line in fp:
-            dat: dict = json.loads(line)
-            ent_id: str = "sz_" + str(dat["RESOLVED_ENTITY"]["ENTITY_ID"]).strip()
-
-            if ent_id not in graph.nodes:
-                graph.add_node(
-                    ent_id,
-                    kind = "entity",
-                )
-
-            ent_addr: typing.Optional[ dict ] = None
-            ent_desc: typing.Optional[ str ] = None
-            ent_type: typing.Optional[ str ] = None
-
-            ent_countries: typing.List[ typing.Optional[ str ]] = []
-
-            # link to resolved data records
-            for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
-                dat_src = dat_rec["DATA_SOURCE"]
-                rec_id = dat_rec["RECORD_ID"]
-
-                graph.add_edge(
-                    ent_id,
-                    rec_id,
-                    kind = "resolved",
-                    why = scrub_text(dat_rec["MATCH_KEY"]),
-                    prob = int(dat_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
-                )
-
-                ent_type = graph.nodes[rec_id]["type"]
-
-                desc: str = dat_rec["ENTITY_DESC"].strip()
-                country: typing.Optional[ str ] = graph.nodes[rec_id]["country"]
-
-                if len(desc) > 0:
-                    ent_desc = desc
-
-                if country is not None and len(country) > 0:
-                    ent_countries.append(graph.nodes[rec_id]["country"])
-
-            graph.nodes[ent_id]["type"] = ent_type
-            graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
-
-            country_counts: Counter = Counter(ent_countries)
-
-            if len(country_counts) > 0:
-                graph.nodes[ent_id]["country"] = country_counts.most_common()[0][0]
-
-            # link to related entities
-            for rel_rec in dat["RELATED_ENTITIES"]:
-                rel_id: str = "sz_" + str(rel_rec["ENTITY_ID"]).strip()
-
-                if rel_id not in graph.nodes:
-                    graph.add_node(
-                        rel_id,
-                        kind = "entity",
-                    )
-
-                graph.add_edge(
-                    ent_id,
-                    rel_id,
-                    kind = "related",
-                    why = scrub_text(rel_rec["MATCH_KEY"]),
-                    prob = int(rel_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
-                )
-
-    return graph
-
-
-def report_graph (
-    graph: nx.DiGraph,
-    ) -> None:
-    """
-Report measures about the loaded seed graph.
-    """
-    ic(len(graph.nodes))
-    ic(len(graph.edges))
-
-    for src_id, dat in graph.nodes(data = True):
-        ic(src_id, dat)
-
-    for src_id, dst_id, dat in graph.edges(data = True):
-        ic(src_id, dst_id, dat)
-
-
-def dump_graph (
-    graph: nx.DiGraph,
-    *,
-    graph_file: pathlib.Path = pathlib.Path("graph.json"),
-    ) -> None:
-    """
-Serialize the seed graph.
-    """
-    with open(graph_file, "w", encoding = "utf-8") as fp:
-        dat: dict = nx.node_link_data(
-            graph,
-            edges = "edges", # for forward compatibility
-        )
-
-        json.dump(
-            dat,
-            fp,
-            indent = 2,
-        )
-
-
 def select_bad_actor (
     graph: nx.DiGraph,
     ) -> typing.List[ str ]:
@@ -439,75 +527,33 @@ Select one viable "bad actor" network from among the subgraphs
     return random.choice(bad_cliques)
 
 
-def rng_gaussian (
-    *,
-    mean: float = 0.0,
-    stdev: float = 1.0,
-    ) -> float:
-    """
-Sample random numbers from a Gaussian distribution.
-    """
-    return float(RNG.normal(loc = mean, scale = stdev, size = 1)[0])
-
-
-def rng_exponential (
-    *,
-    scale: float = 1.0,
-    ) -> float:
-    """
-Sample random numbers from an Exponential distribution.
-    """
-    return float(RNG.exponential(scale = scale, size = 1)[0])
-
-
-def rng_poisson (
-    *,
-    lambda_: float = 1.0,
-    ) -> float:
-    """
-Sample random numbers from a Poisson distribution.
-    """
-    return float(RNG.poisson(lam = lambda_, size = 1)[0])
-
-
 ######################################################################
 ## main entry point
 
 if __name__ == "__main__":
     #eval_names_dataset()
 
-    graph: nx.DiGraph = load_graph()
+    config: dict = {}
+    sim: Simulation = Simulation(config)
+    net: Network = Network(config)
 
-    for node_id, rank in nx.eigenvector_centrality(graph).items():
-        graph.nodes[node_id]["rank"] = rank
+    net.load()
+    net.dump()
 
-    ## repair the names for each resolved entity by inheriting up from
-    ## the resolved data records
-    for node_id, dat in graph.nodes(data = True):
-        if dat["kind"] == "entity" and dat["type"] == "ftm:Person" and dat["name"] is None:
-            for neigh_id in graph.neighbors(node_id):
-                rec_dat: dict = graph.nodes[neigh_id]
-
-                if rec_dat["kind"] == "data":
-                    graph.nodes[node_id]["name"] = rec_dat["name"]
-
-    dump_graph(graph)
+    #net.report()
     #sys.exit(0)
 
-    ## review how much data got linked
-    #report_graph(graph)
-
     ## select one subgraph as the bad-actor network
-    bad_clique: list = select_bad_actor(graph)
+    bad_clique: list = select_bad_actor(net.graph)
 
     for node_id in bad_clique:
-        dat: dict = graph.nodes[node_id]
+        dat: dict = net.graph.nodes[node_id]
         ic(node_id, dat)
 
     ubo_person: str = bad_clique[0]
     shell_corps: list = bad_clique[1:]
     path_range: typing.List[ int ] = list(range(MIN_CLIQUE_SIZE, min(len(shell_corps) + 1, MAX_PATH_LEN)))
-    total_funds: float = round(rng_gaussian(mean = TRANSFER_TOTAL_MEDIAN / 2.0, stdev = TRANSFER_TOTAL_MEDIAN / 100.0), 2)
+    total_funds: float = round(sim.rng_gaussian(mean = TRANSFER_TOTAL_MEDIAN / 2.0, stdev = TRANSFER_TOTAL_MEDIAN / 100.0), 2)
 
     ic(ubo_person, total_funds, path_range, shell_corps)
     #sys.exit(0)
@@ -529,20 +575,20 @@ if __name__ == "__main__":
                 src_id: int = pair[0]
                 dst_id: int = pair[1]
 
-                gen_amount: float = rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 10.0)
+                gen_amount: float = sim.rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 10.0)
                 amount: float = round(TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
                 assert amount > 0.0, f"negative amount: {gen_amount}"
 
                 subtotal += amount
 
-                gen_offset: float = rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)
+                gen_offset: float = sim.rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)
                 date: datetime = datetime.now() + timedelta(hours = gen_offset * 24.0)
 
                 xact.append({
-                    "payer": graph.nodes[src_id]["name"],
-                    "payer_country": graph.nodes[src_id]["country"],
-                    "benef": graph.nodes[dst_id]["name"],
-                    "benef_country": graph.nodes[dst_id]["country"],
+                    "payer": net.graph.nodes[src_id]["name"],
+                    "payer_country": net.graph.nodes[src_id]["country"],
+                    "benef": net.graph.nodes[dst_id]["name"],
+                    "benef_country": net.graph.nodes[dst_id]["country"],
                     "amount": amount,
                     "date": date.date().isoformat(),
                 })
