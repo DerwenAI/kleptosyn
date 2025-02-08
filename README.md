@@ -25,7 +25,7 @@ python3 -m pip install -U pip wheel
 python3 -m pip install -r requirements.txt
 ```
 
-You will also the CLI for Google Cloud to get the input datasets:
+You will also need the CLI for Google Cloud to get the input datasets:
 <https://cloud.google.com/storage/docs/discover-object-storage-gcloud>
 
 

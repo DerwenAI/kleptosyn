@@ -6,5 +6,6 @@ jupyterlab_execute_time >= 3.1
 names-dataset >= 3.1
 networkx >= 3.4
 pandas >= 2.2
+pycountry >= 24.6
 pyvis >= 0.3
 watermark >= 2.4

@@ -3,8 +3,8 @@
 # Copyright ©2025 Senzing, Inc. All rights reserved.
 
 """
-Synthetic data generation for investigative graphs based on network
-motifs which represent patterns of bad-actor tradecraft.
+Synthetic data generation for investigative graphs based on
+patterns of bad-actor tradecraft.
 
 Steps (so far):
   * load slice of OpenSanctions (risk data)
@@ -21,21 +21,23 @@ Steps (so far):
     + generate paths among the shell corps
     + sample distributions to simulate money transfers: timing, amounts
   * use `PyVis` to render an interactive visualization
+  * generate transactions across the motifs (event data)
+     + parameterize the timing and chunking
 
 TODO:
   - load network motif patterns representing bad-actor tradecraft
   - generate entities for shell corp intermediary organizations
      + apply _channel separation_ to obscure beneficial owners
      + use `name-dataset` and `random-address` to generate intermediares
-  - generate transactions across the motifs (event data)
-     + parameterize the timing and chunking
   - generate legit transactions as decoys (~98%)
   - flatten the graph: serialize records as a set of CSV files
   - have Clair eval to run ER + KG + algos to identify fraud
+
 """
 
 
-from collections import defaultdict
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta
 import itertools
 import json
 import pathlib
@@ -49,6 +51,8 @@ from icecream import ic  # type: ignore  # pylint: disable=E0401
 from names_dataset import NameDataset, NameWrapper
 import networkx as nx
 import numpy as np
+import pandas as pd
+import pycountry
 
 
 APPROX_FRAUD_RATE: float = 0.02
@@ -112,7 +116,7 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
     return str(unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8").replace("\u200b", ""))
 
 
-def get_name (
+def extract_name (
     dat: dict,
     ) -> str:
     """
@@ -139,7 +143,7 @@ Extract names from the input data records.
         sys.exit(0)
 
 
-def get_addr (
+def extract_addr (
     dat: dict,
     ) -> typing.Optional[ str ]:
     """
@@ -152,6 +156,56 @@ Extract addresses from the input data records.
                     return addr_rec["ADDR_FULL"]
 
         return None
+    except Exception as ex:
+        ic(ex)
+        traceback.print_exc()
+
+        ic(dat)
+        sys.exit(0)
+
+
+def extract_country (
+    dat: dict,
+    ) -> typing.Optional[ str ]:
+    """
+Extract country codes from the input data records.
+    """
+    try:
+        country: typing.Optional[ str ] = None
+
+        if "REGISTRATION_COUNTRY" in dat:
+            country = dat["REGISTRATION_COUNTRY"].strip().upper()
+        elif "COUNTRIES" in dat:
+            for rec in dat["COUNTRIES"]:
+                for key, val in rec.items():
+                    if key in ["CITIZENSHIP", "NATIONALITY", "REGISTRATION_COUNTRY"]:
+                        country = val.strip().upper()
+                        break
+        elif "ADDRESSES" in dat:
+            for rec in dat["ADDRESSES"]:
+                for key, val in rec.items():
+                    if key in ["ADDR_COUNTRY"]:
+                        country = val.strip().upper()
+                        break
+        elif "ATTRIBUTES" in dat:
+            for rec in dat["ATTRIBUTES"]:
+                for key, val in rec.items():
+                    if key in ["NATIONALITY"]:
+                        country = val.strip().upper()
+                        break
+
+        # data quality check
+        if country is not None:
+            if len(country) < 1:
+                country = None
+
+            else:
+                country_info = pycountry.countries.get(alpha_2 = country)
+
+                if country_info is None:
+                    print("UNKONWN:", country)
+
+        return country
     except Exception as ex:
         ic(ex)
         traceback.print_exc()
@@ -175,9 +229,10 @@ Load a Senzing formatted JSON dataset.
             graph.add_node(
                 rec_id,
                 kind = "data",
-                name = scrub_text(get_name(dat)),
-                addr = scrub_text(get_addr(dat)),
                 type = FTM_CLASSES[dat["RECORD_TYPE"].lower()],
+                name = scrub_text(extract_name(dat)),
+                addr = scrub_text(extract_addr(dat)),
+                country = extract_country(dat),
             )
 
 
@@ -212,6 +267,8 @@ Load the seed graph from input data files.
             ent_desc: typing.Optional[ str ] = None
             ent_type: typing.Optional[ str ] = None
 
+            ent_countries: typing.List[ typing.Optional[ str ]] = []
+
             # link to resolved data records
             for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
                 dat_src = dat_rec["DATA_SOURCE"]
@@ -225,15 +282,24 @@ Load the seed graph from input data files.
                     prob = int(dat_rec["MATCH_LEVEL"]) / MAX_MATCH_LEVEL,
                 )
 
+                ent_type = graph.nodes[rec_id]["type"]
+
                 desc: str = scrub_text(dat_rec["ENTITY_DESC"]).strip()
+                country: typing.Optional[ str ] = graph.nodes[rec_id]["country"]
 
                 if len(desc) > 0:
                     ent_desc = desc
 
-                ent_type = graph.nodes[rec_id]["type"]
+                if country is not None and len(country) > 0:
+                    ent_countries.append(graph.nodes[rec_id]["country"])
 
-            graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
             graph.nodes[ent_id]["type"] = ent_type
+            graph.nodes[ent_id]["name"] = scrub_text(ent_desc)
+
+            country_counts: Counter = Counter(ent_countries)
+
+            if len(country_counts) > 0:
+                graph.nodes[ent_id]["country"] = country_counts.most_common()[0][0]
 
             # link to related entities
             for rel_rec in dat["RELATED_ENTITIES"]:
@@ -326,40 +392,31 @@ def rng_gaussian (
     *,
     mean: float = 0.0,
     stdev: float = 1.0,
-    size: int = 100,
-    ) -> typing.Iterator[ float ]:
+    ) -> float:
     """
 Sample random numbers from a Gaussian distribution.
     """
-    for sample in RNG.normal(loc = mean, scale = stdev, size = (size, 1)):
-        for num in sample:
-            yield float(num)
+    return float(RNG.normal(loc = mean, scale = stdev, size = 1)[0])
 
 
 def rng_exponential (
     *,
     scale: float = 1.0,
-    size: int = 100,
-    ) -> typing.Iterator[ float ]:
+    ) -> float:
     """
 Sample random numbers from an Exponential distribution.
     """
-    for sample in RNG.exponential(scale = scale, size = (size, 1)):
-        for num in sample:
-            yield float(num)
+    return float(RNG.exponential(scale = scale, size = 1)[0])
 
 
 def rng_poisson (
     *,
     lambda_: float = 1.0,
-    size: int = 100,
-    ) -> typing.Iterator[ float ]:
+    ) -> float:
     """
 Sample random numbers from a Poisson distribution.
     """
-    for sample in RNG.poisson(lam = lambda_, size = (size, 1)):
-        for num in sample:
-            yield float(num)
+    return float(RNG.poisson(lam = lambda_, size = 1)[0])
 
 
 ######################################################################
@@ -398,30 +455,49 @@ if __name__ == "__main__":
 
     ubo_person: str = bad_clique[0]
     shell_corps: list = bad_clique[1:]
+    path_range: typing.List[ int ] = list(range(MIN_CLIQUE_SIZE, min(len(shell_corps) + 1, 10)))
+    total_funds: float = round(rng_gaussian(mean = TRANSFER_TOTAL_MEDIAN / 2.0, stdev = TRANSFER_TOTAL_MEDIAN / 100.0), 2)
 
-    ic(ubo_person, shell_corps)
+    ic(ubo_person, total_funds, path_range, shell_corps)
+    #sys.exit(0)
 
     ## generate paths among the shell corps
-    paths = [
-        path
-        for path in itertools.permutations(shell_corps, r = MIN_CLIQUE_SIZE)
-    ]
+    xact: typing.List[ dict ] = []
+    subtotal: float = 0.0
 
-    for path in random.sample(paths, 4):
-        ic(path)
+    while subtotal < total_funds:
+        paths = [
+            path
+            for path in itertools.permutations(shell_corps, r = random.choice(path_range))
+        ]
 
+        for path in random.sample(paths, 4):
+            ic(ubo_person, subtotal, path[0])
 
-    ## sample distributions to simulate money transfers: timing, amounts
-    for i, amount in enumerate(rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 4.0)):
-        if i > 10:
-            break
-        else:
-            amount = TRANSFER_CHUNK_MEDIAN - amount
-            ic(i, amount)
+            for pair in itertools.pairwise(path):
+                src_id: int = pair[0]
+                dst_id: int = pair[1]
 
-    for i, delay in enumerate(rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)):
-        if i > 10:
-            break
-        else:
-            ic(i, delay)
+                gen_amount: float = rng_gaussian(mean = TRANSFER_CHUNK_MEDIAN / 2.0, stdev = TRANSFER_CHUNK_MEDIAN / 4.0)
+                amount: float = round(TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
+                subtotal += amount
 
+                gen_offset: float = rng_poisson(lambda_ = INTER_ARRIVAL_MEDIAN)
+                date: datetime = datetime.now() + timedelta(hours = gen_offset * 24.0)
+
+                xact.append({
+                    "payer": graph.nodes[src_id]["name"],
+                    "payer_country": graph.nodes[src_id]["country"],
+                    "benef": graph.nodes[dst_id]["name"],
+                    "benef_country": graph.nodes[dst_id]["country"],
+                    "amount": amount,
+                    "date": date.date().isoformat(),
+                })
+
+    ## export the generated transactions
+    df_xact: pd.DataFrame = pd.DataFrame.from_dict(
+        xact,
+        orient = "columns"
+    )
+
+    ic(df_xact.head())
