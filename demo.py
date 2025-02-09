@@ -76,4 +76,4 @@ if __name__ == "__main__":
     subtotal: float = sim.simulate(net, syn)
     syn.dump()
 
-    ic(syn.total_fraud, syn.finish, syn.bad_actors)
+    ic(sim.finish, syn.total_fraud, syn.bad_actors)

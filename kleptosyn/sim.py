@@ -54,8 +54,10 @@ Simulated patterns of tradecraft.
 Constructor.
         """
         self.config: dict = config
+
         self.rng: np.random.Generator = np.random.default_rng()
         self.start: datetime = datetime.now()
+        self.finish: datetime = self.start
 
 
     def rng_gaussian (
@@ -126,7 +128,94 @@ returns:
         return random.choice(bad_cliques)
 
 
-    def simulate (  # pylint: disable=R0914
+    def gen_xact_amount (
+        self,
+        ) -> float:
+        """
+Generate the amount for a transaction, based on a random variable.
+
+returns:
+    `amount`: transaction amount, non-negative, rounded to two decimal points.
+        """
+        gen_amount: float = self.rng_gaussian(
+            mean = self.TRANSFER_CHUNK_MEDIAN / 2.0,
+            stdev = self.TRANSFER_CHUNK_MEDIAN / 10.0,
+        )
+
+        amount: float = round(self.TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
+        assert amount > 0.0, f"negative amount: {gen_amount}"
+
+        return amount
+
+
+    def gen_xact_timing (
+        self,
+        ) -> datetime:
+        """
+Generate the timing for a transaction, based on a random variable.
+
+returns:
+    `timing`: transaction datetime offset
+        """
+        gen_offset: float = self.rng_poisson(lambda_ = self.INTER_ARRIVAL_MEDIAN)
+        timing: datetime = self.start + timedelta(hours = gen_offset * 24.0)
+
+        return timing
+
+
+    def run_one_fraud (  # pylint: disable=R0913,R0917
+        self,
+        net: Network,
+        syn: SynData,
+        ubo_owner: str,
+        shell_corps: typing.Set[ str ],
+        paths: typing.List[ str ],
+        *,
+        debug: bool = True,
+        ) -> float:
+        """
+Simulate one bad-actor running fraud.
+
+returns:
+    `subtotal`: amount of money transferred
+        """
+        subtotal: float = 0.0
+
+        for path in random.sample(paths, 4):
+            for pair in itertools.pairwise(path):
+                src_id: str = pair[0]
+                dst_id: str = pair[1]
+
+                amount: float = self.gen_xact_amount()
+                subtotal += amount
+
+                timing: datetime = self.gen_xact_timing()
+                self.finish = max(self.finish, timing)
+
+                if debug:
+                    ic(ubo_owner, shell_corps, amount, timing)
+
+                # accumulate results from these simulation steps
+                syn.add_transact({
+                    "pay": net.graph.nodes[src_id]["name"],
+                    "pay_country": net.graph.nodes[src_id]["country"],
+                    "ben": net.graph.nodes[dst_id]["name"],
+                    "ben_country": net.graph.nodes[dst_id]["country"],
+                    "amount": amount,
+                    "date": timing.date().isoformat(),
+                    syn.FRAUD_COL_NAME: True,
+                })
+
+                syn.add_fraud(
+                    subtotal,
+                    ubo_owner,
+                    shell_corps,
+                )
+
+        return subtotal
+
+
+    def simulate (
         self,
         net: Network,
         syn: SynData,
@@ -157,6 +246,7 @@ returns:
             )
         )
 
+        # generate a target for transferred funds based on a random variable
         target_funds: float = round(
             self.rng_gaussian(
                 mean = self.TRANSFER_TOTAL_MEDIAN / 2.0,
@@ -168,11 +258,11 @@ returns:
         if debug:
             ic(ubo_owner, target_funds, path_range, shell_corps)
 
-        # generate paths among the shell corps
+        # iterate until reaching the target amount
         subtotal: float = 0.0
-        last_date: datetime = self.start
 
         while subtotal < target_funds:
+            # generate paths among the shell corps
             paths: typing.List[ str ] = list(
                 itertools.permutations(  # type: ignore
                     shell_corps,
@@ -180,45 +270,13 @@ returns:
                 )
             )
 
-            for path in random.sample(paths, 4):
-                if debug:
-                    ic(subtotal, ubo_owner, path)
-
-                for pair in itertools.pairwise(path):
-                    src_id: str = pair[0]
-                    dst_id: str = pair[1]
-
-                    gen_amount: float = self.rng_gaussian(
-                        mean = self.TRANSFER_CHUNK_MEDIAN / 2.0,
-                        stdev = self.TRANSFER_CHUNK_MEDIAN / 10.0,
-                    )
-
-                    amount: float = round(self.TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
-                    assert amount > 0.0, f"negative amount: {gen_amount}"
-
-                    subtotal += amount
-
-                    gen_offset: float = self.rng_poisson(lambda_ = self.INTER_ARRIVAL_MEDIAN)
-                    date: datetime = self.start + timedelta(hours = gen_offset * 24.0)
-
-                    last_date = max(last_date, date)
-
-                    # accumulate results from these simulation steps
-                    syn.add_transact({
-                        "pay": net.graph.nodes[src_id]["name"],
-                        "pay_country": net.graph.nodes[src_id]["country"],
-                        "ben": net.graph.nodes[dst_id]["name"],
-                        "ben_country": net.graph.nodes[dst_id]["country"],
-                        "amount": amount,
-                        "date": date.date().isoformat(),
-                        syn.FRAUD_COL_NAME: True,
-                    })
-
-                    syn.add_fraud(
-                        last_date,
-                        subtotal,
-                        ubo_owner,
-                        shell_corps,
-                    )
+            subtotal += self.run_one_fraud(
+                net,
+                syn,
+                ubo_owner,
+                shell_corps,
+                paths,
+                debug = debug,
+            )
 
         return subtotal

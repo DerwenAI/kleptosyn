@@ -7,7 +7,6 @@ see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
 Synthetic data generation.
 """
 
-from datetime import datetime
 import pathlib
 import typing
 
@@ -33,7 +32,7 @@ Synthetic data results: people, companies, transactions.
 Constructor.
         """
         self.config: dict = config
-        self.finish: datetime = datetime.now()
+
         self.total_fraud: float = 0.0
         self.bad_actors: typing.Set[ str ] = set()
         self.xact: typing.List[ dict ] = []
@@ -51,7 +50,6 @@ Add a transaction to the results.
 
     def add_fraud (
         self,
-        last_date: datetime,
         subtotal: float,
         ubo_owner: str,
         shell_corps: typing.Set[ str ],
@@ -59,7 +57,6 @@ Add a transaction to the results.
         """
 Track one generated fraud pattern within the output data.
         """
-        self.finish = max(self.finish, last_date)
         self.total_fraud += subtotal
 
         self.bad_actors.update([ ubo_owner ])
