@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
+see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
 Synthetic data generation for investigative graphs based on
 patterns of bad-actor tradecraft.
 
@@ -49,8 +51,6 @@ TODO:
   - generate entities for shell corp intermediary organizations
      + apply _channel separation_ to obscure beneficial owners
      + use `name-dataset` and `random-address` to generate intermediares
-
-see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
 """
 
 from icecream import ic

@@ -17,6 +17,7 @@ import typing
 import unicodedata
 
 from icecream import ic  # type: ignore  # pylint: disable=E0401
+from names_dataset import NameDataset, NameWrapper
 import networkx as nx
 import pycountry
 
@@ -32,7 +33,7 @@ Network to sample for simulated bad actors.
 
     ER_MAX_MATCH_LEVEL: float = 11.0
     ER_ENTITY_PREFIX: str = "sz_"
-    
+
     # graph semantics: <https://followthemoney.tech/explorer/>
     # ftm:Person, ftm:Company, ftm:Payment
     FTM_CLASSES: typing.Dict[ str, str ] = {
@@ -61,17 +62,17 @@ Constructor.
 Generate synthetic data about names, based in countries.
 <https://github.com/philipperemy/name-dataset>
         """
-        nd = NameDataset()
+        nd: NameDataset = NameDataset()
         ic(NameWrapper(nd.search("Philippe")).describe)
 
-        foo = nd.get_top_names(
+        gen_names = nd.get_top_names(
             n = 11,
             use_first_names = False,
             country_alpha2 = "IR",
             #gender = "F",
         )
 
-        ic(foo)
+        ic(gen_names)
 
 
     def scrub_text (
@@ -100,7 +101,7 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
         self,
         dat: dict,
         *,
-        debug: bool = False,
+        debug: bool = False,  # pylint: disable=W0613
         ) -> str:
         """
 Extract names from the input data records.
@@ -116,7 +117,7 @@ Extract names from the input data records.
                         if "NAME_FULL" in rec:
                             name = rec["NAME_FULL"]
                             break
-                        elif "NAME_ORG" in rec:
+                        if "NAME_ORG" in rec:
                             name = rec["NAME_ORG"]
                             break
                     elif "PRIMARY_NAME_ORG" in rec:
@@ -126,16 +127,16 @@ Extract names from the input data records.
             if name is not None:
                 name = self.scrub_text(name)
 
-                if name == "-" or len(name) < 1:
+                if name == "-" or len(name) < 1:  # type: ignore
                     name = None
-        
+
             if name is None:
                 print("extract_name DQ:", dat)
                 sys.exit(0)
 
             return name
 
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=W0718
             ic(ex)
             traceback.print_exc()
 
@@ -147,7 +148,7 @@ Extract names from the input data records.
         self,
         dat: dict,
         *,
-        debug: bool = False,
+        debug: bool = False,  # pylint: disable=W0613
         ) -> typing.Optional[ str ]:
         """
 Extract addresses from the input data records.
@@ -164,11 +165,12 @@ Extract addresses from the input data records.
             if addr is not None:
                 addr = self.scrub_text(addr)
 
-                if addr == "-" or len(addr) < 1:
+                if addr == "-" or len(addr) < 1:  # type: ignore
                     addr = None
-        
+
             return addr
-        except Exception as ex:
+
+        except Exception as ex:  # pylint: disable=W0718
             ic(ex)
             traceback.print_exc()
 
@@ -176,11 +178,11 @@ Extract addresses from the input data records.
             sys.exit(0)
 
 
-    def extract_country (
+    def extract_country (  # pylint: disable=R0912
         self,
         dat: dict,
         *,
-        debug: bool = False,
+        debug: bool = False,  # pylint: disable=W0613
         ) -> typing.Optional[ str ]:
         """
 Extract country codes from the input data records.
@@ -221,7 +223,8 @@ Extract country codes from the input data records.
                         print("UNKONWN:", country)
 
             return country
-        except Exception as ex:
+
+        except Exception as ex:  # pylint: disable=W0718
             ic(ex)
             traceback.print_exc()
 
@@ -251,7 +254,7 @@ Load a Senzing formatted JSON dataset.
                 )
 
 
-    def load_er_export (
+    def load_er_export (  # pylint: disable=R0914
         self,
         *,
         er_export_file: pathlib.Path = pathlib.Path("export.json"),
@@ -270,7 +273,6 @@ Load the entity resolution results exported from Senzing.
                         kind = "entity",
                     )
 
-                ent_addr: typing.Optional[ dict ] = None
                 ent_desc: typing.Optional[ str ] = None
                 ent_type: typing.Optional[ str ] = None
 
@@ -278,7 +280,6 @@ Load the entity resolution results exported from Senzing.
 
                 # link to resolved data records
                 for dat_rec in dat["RESOLVED_ENTITY"]["RECORDS"]:
-                    dat_src = dat_rec["DATA_SOURCE"]
                     rec_id = dat_rec["RECORD_ID"]
 
                     self.graph.add_edge(
@@ -301,7 +302,7 @@ Load the entity resolution results exported from Senzing.
                         ent_countries.append(self.graph.nodes[rec_id]["country"])
 
                 self.graph.nodes[ent_id]["type"] = ent_type
-                self.graph.nodes[ent_id]["name"] = self.scrub_text(ent_desc)
+                self.graph.nodes[ent_id]["name"] = self.scrub_text(ent_desc)  # type: ignore
 
                 country_counts: Counter = Counter(ent_countries)
 

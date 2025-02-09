@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Simulating patterns of bad-actor tradecraft.
-
 see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
+Simulating patterns of bad-actor tradecraft.
 """
 
 from datetime import datetime, timedelta
@@ -140,7 +140,7 @@ returns:
     `subtotal`: the amount of money transferred through the network
         """
         # populate the bad-actor network
-        bad_clique: list = self.select_bad_actor(net.graph)
+        bad_clique: typing.List[ str ] = self.select_bad_actor(net.graph)
 
         if debug:
             for node_id in bad_clique:
@@ -148,7 +148,7 @@ returns:
                 ic(node_id, dat)
 
         ubo_owner: str = bad_clique[0]
-        shell_corps: list = bad_clique[1:]
+        shell_corps: typing.Set[ str ] = set(bad_clique[1:])
 
         path_range: typing.List[ int ] = list(
             range(
@@ -174,7 +174,7 @@ returns:
 
         while subtotal < target_funds:
             paths: typing.List[ str ] = list(
-                itertools.permutations(
+                itertools.permutations(  # type: ignore
                     shell_corps,
                     r = random.choice(path_range),
                 )
@@ -185,8 +185,8 @@ returns:
                     ic(subtotal, ubo_owner, path)
 
                 for pair in itertools.pairwise(path):
-                    src_id: int = pair[0]
-                    dst_id: int = pair[1]
+                    src_id: str = pair[0]
+                    dst_id: str = pair[1]
 
                     gen_amount: float = self.rng_gaussian(
                         mean = self.TRANSFER_CHUNK_MEDIAN / 2.0,
