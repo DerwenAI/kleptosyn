@@ -54,13 +54,15 @@ TODO:
 """
 
 from icecream import ic
-from kleptosyn import Network, Simulation, SynData
+from kleptosyn import Network, Simulation, SynData, get_repo_version
 
 
 ######################################################################
 ## main entry point
 
 if __name__ == "__main__":
+    ic(get_repo_version())
+
     config: dict = {}
 
     sim: Simulation = Simulation(config)
