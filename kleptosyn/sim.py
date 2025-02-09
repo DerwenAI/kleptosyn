@@ -184,8 +184,13 @@ returns:
 
         for path in random.sample(paths, 4):
             for pair in itertools.pairwise(path):
-                src_id: str = pair[0]
-                dst_id: str = pair[1]
+                pay_id: str = pair[0]
+                pay_info: dict = net.get_pii_features(pay_id)
+                syn.add_entity(pay_info)
+
+                ben_id: str = pair[1]
+                ben_info: dict = net.get_pii_features(ben_id)
+                syn.add_entity(ben_info)
 
                 amount: float = self.gen_xact_amount()
                 subtotal += amount
@@ -198,10 +203,10 @@ returns:
 
                 # accumulate results from these simulation steps
                 syn.add_transact({
-                    "pay": net.graph.nodes[src_id]["name"],
-                    "pay_country": net.graph.nodes[src_id]["country"],
-                    "ben": net.graph.nodes[dst_id]["name"],
-                    "ben_country": net.graph.nodes[dst_id]["country"],
+                    "pay": pay_info["name"],
+                    "pay_country": net.graph.nodes[pay_id]["country"],
+                    "ben": ben_info["name"],
+                    "ben_country": net.graph.nodes[ben_id]["country"],
                     "amount": amount,
                     "date": timing.date().isoformat(),
                     syn.FRAUD_COL_NAME: True,
@@ -304,8 +309,13 @@ Simulate legit B2B transfers.
             pair: typing.List[ str ] = random.sample(shells, 2)
             self.b2b_actors.update(set(pair))
 
-            src_id: str = pair[0]
-            dst_id: str = pair[1]
+            pay_id: str = pair[0]
+            pay_info: dict = net.get_pii_features(pay_id)
+            syn.add_entity(pay_info)
+
+            ben_id: str = pair[1]
+            ben_info: dict = net.get_pii_features(ben_id)
+            syn.add_entity(ben_info)
 
             amount: float = self.gen_xact_amount()
             subtotal += amount
@@ -317,10 +327,10 @@ Simulate legit B2B transfers.
 
             # accumulate results from these simulation steps
             syn.add_transact({
-                "pay": net.graph.nodes[src_id]["name"],
-                "pay_country": net.graph.nodes[src_id]["country"],
-                "ben": net.graph.nodes[dst_id]["name"],
-                "ben_country": net.graph.nodes[dst_id]["country"],
+                "pay": pay_info["name"],
+                "pay_country": net.graph.nodes[pay_id]["country"],
+                "ben": ben_info["name"],
+                "ben_country": net.graph.nodes[ben_id]["country"],
                 "amount": amount,
                 "date": timing.date().isoformat(),
                 syn.FRAUD_COL_NAME: False,

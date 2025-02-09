@@ -34,6 +34,7 @@ Constructor.
         self.config: dict = config
 
         self.xact: typing.List[ dict ] = []
+        self.ents: typing.List[ dict ] = []
 
 
     def add_transact (
@@ -46,16 +47,28 @@ Add a transaction to the results.
         self.xact.append(transact)
 
 
+    def add_entity (
+        self,
+        entity: dict,
+        ) -> None:
+        """
+Add an entity to the results.
+        """
+        self.ents.append(entity)
+
+
     def dump (
         self,
         *,
         xact_file: pathlib.Path = pathlib.Path("transact.csv"),
+        ents_file: pathlib.Path = pathlib.Path("entities.csv"),
         debug: bool = True,
         ) -> None:
         """
 Serialize the generated people, companies, and transactions.
         """
-        df: pd.DataFrame = pd.DataFrame.from_dict(
+        # serialize the transactions
+        df_xact: pd.DataFrame = pd.DataFrame.from_dict(
             self.xact,
             orient = "columns"
         ).drop(
@@ -64,10 +77,26 @@ Serialize the generated people, companies, and transactions.
         )
 
         if debug:
-            ic(df.head())
+            ic(df_xact.head())
 
-        df.to_csv(
+        df_xact.to_csv(
             xact_file,
+            sep = "\t",
+            encoding = "utf-8",
+            index = False,
+        )
+
+        # serialize the people and companies
+        df_ents: pd.DataFrame = pd.DataFrame.from_dict(
+            self.ents,
+            orient = "columns"
+        ).drop_duplicates().sort_values(by = [ "name" ])
+
+        if debug:
+            ic(df_ents.head())
+
+        df_ents.to_csv(
+            ents_file,
             sep = "\t",
             encoding = "utf-8",
             index = False,

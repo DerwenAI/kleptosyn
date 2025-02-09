@@ -41,14 +41,14 @@ Steps (so far):
   * generate transactions across the motifs (event data)
      + parameterize the timing and chunking
   * generate legit transactions as decoys (~98%)
+  * flatten the graph: serialize records as a set of output CSV files
 
 TODO:
-  - flatten the graph: serialize records as a set of CSV files
+
   - have Clair eval to run ER + KG + algos to identify fraud
-
   - load network motif patterns representing bad-actor tradecraft
-
   - generate entities for shell corp intermediary organizations
+     + located within tax-haven countries
      + apply _channel separation_ to obscure beneficial owners
      + use `name-dataset` and `random-address` to generate intermediares
 """

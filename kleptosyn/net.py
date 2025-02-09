@@ -10,6 +10,7 @@ Represent a graph of potential bad-actor networks.
 from collections import Counter
 import json
 import pathlib
+import random
 import re
 import sys
 import traceback
@@ -253,6 +254,9 @@ Load a Senzing formatted JSON dataset.
                     country = self.extract_country(dat),
                 )
 
+                # fuck
+                # "RELATIONSHIPS": [{"REL_POINTER_DOMAIN": "OOR", "REL_POINTER_KEY": "12052062250481936308"
+
 
     def load_er_export (  # pylint: disable=R0914
         self,
@@ -361,6 +365,38 @@ to construct a graph to sample as simulated bad actors.
         # use centrality to rank entities (e.g., as influentual UBOs)
         for node_id, rank in nx.eigenvector_centrality(self.graph).items():
             self.graph.nodes[node_id]["rank"] = rank
+
+
+    def get_pii_features (
+        self,
+        node_id: str,
+        ) -> dict:
+        """
+Accessor builds and returns a dictionary of the PII features for the
+specified entity.
+        """
+        rec_id: str = node_id
+
+        if self.graph.nodes[node_id]["kind"] == "entity":
+            rec_list: typing.List[ str ] = [
+                neigh_id
+                for neigh_id in self.graph.neighbors(node_id)
+                if self.graph.nodes[neigh_id]["kind"] == "data"
+                #if self.graph.nodes[neigh_id]["addr"] is not None
+            ]
+
+            if len(rec_list) > 0:
+                rec_id = random.choice(rec_list)
+
+        if rec_id is None:
+            ic(node_id)
+            sys.exit(0)
+
+        return {
+            "name": self.graph.nodes[rec_id]["name"],
+            "addr": self.graph.nodes[rec_id]["addr"],
+            "type": "person" if (self.graph.nodes[rec_id]["type"] == "ftm:Person") else "organization",
+        }
 
 
     def dump (

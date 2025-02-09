@@ -2,13 +2,14 @@
 *~
 azeri.csv
 occrp_17k.csv
-transact.csv
 export.json
 graph.json
 networkx-pyvis.html
 occrp.html
 open-ownership.json
 open-sanctions.json
+transact.csv
+entities.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
