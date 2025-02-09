@@ -16,18 +16,21 @@ Ontologies used:
 The simulation uses the following process:
 
   1. Construct a _Network_ that represents bad-actor subgraphs
+
     - Use `OpenSanctions` (risk data) and `OpenOwnership` (link data) for real-world UBO data
     - Run `Senzing` entity resolution to generate a "backbone" for organizing the graph
     - Partition into subgraphs and run centrality measures
 
   2. Configure a _Simulation_ for generating patterns of bad-actor tradecraft
+
     - Analyze the transactions of the OCCRP "Azerbaijani Laundromat" leaked dataset (event data)
     - Sample probability distributions for shell topologies, transfer amounts, and transfer timing
     - Generate a large portion of "legit" transfers (49:1 ratio)
 
-  3. Generate the _SynData_ by applying the simulation on the network to generate synthetic data
-    - Serialize the transactions and people/companies involved
+  3. Generate the _SynData_ (synthetic data) by applying the simulation on the network
+
     - Track the generated bad-actor transactions
+    - Serialize the transactions and people/companies involved
 
 
 ## build an environment
