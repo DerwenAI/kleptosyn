@@ -40,9 +40,9 @@ Steps (so far):
   * use `PyVis` to render an interactive visualization
   * generate transactions across the motifs (event data)
      + parameterize the timing and chunking
+  * generate legit transactions as decoys (~98%)
 
 TODO:
-  - generate legit transactions as decoys (~98%)
   - flatten the graph: serialize records as a set of CSV files
   - have Clair eval to run ER + KG + algos to identify fraud
 
@@ -73,7 +73,9 @@ if __name__ == "__main__":
     #net.report()
     #sys.exit(0)
 
-    subtotal: float = sim.simulate(net, syn)
+    sim.simulate_fraud(net, syn)
+    sim.simulate_legit(net, syn)
+
     syn.dump()
 
-    ic(sim.finish, syn.total_fraud, syn.bad_actors)
+    ic(sim.finish, sim.total_fraud)

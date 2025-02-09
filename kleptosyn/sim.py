@@ -35,15 +35,15 @@ Simulated patterns of tradecraft.
         "RU",
     ])
 
-    # distributions derived from `occrp.ipynb` analysis
-    INTER_ARRIVAL_MEDIAN: float = 8.7
-    INTER_ARRIVAL_STDEV: float = 32.745006
+    # distributions derived from the `occrp.ipynb` analysis
+    XACT_TIMING_MEDIAN: float = 8.7
+    XACT_TIMING_STDEV: float = 32.745006
 
-    TRANSFER_CHUNK_MEDIAN: float = 1.963890e+05
-    TRANSFER_CHUNK_STDEV: float = 5.301957e+05
+    XACT_CHUNK_MEDIAN: float = 1.963890e+05
+    XACT_CHUNK_STDEV: float = 5.301957e+05
 
-    TRANSFER_TOTAL_MEDIAN: float = 1.408894e+06
-    TRANSFER_TOTAL_STDEV: float = 8.014517e+07
+    XACT_TOTAL_MEDIAN: float = 1.408894e+06
+    XACT_TOTAL_STDEV: float = 8.014517e+07
 
 
     def __init__ (
@@ -58,6 +58,9 @@ Constructor.
         self.rng: np.random.Generator = np.random.default_rng()
         self.start: datetime = datetime.now()
         self.finish: datetime = self.start
+        self.b2b_actors: typing.Set[ str ] = set()
+        self.bad_actors: typing.Set[ str ] = set()
+        self.total_fraud: float = 0.0
 
 
     def rng_gaussian (
@@ -97,12 +100,12 @@ Sample random numbers from a Poisson distribution.
     def select_bad_actor (
         self,
         graph: nx.DiGraph,
-        ) -> typing.List[ str ]:
+        ) -> list:
         """
-Select one bad-actor network from among the viable subgraphs.
+Select the bad-actor networks from among the viable subgraphs.
 
 returns:
-    one bad-actor network pattern
+    bad-actor network patterns
         """
         bad_cliques: list = []
 
@@ -123,7 +126,7 @@ returns:
             ]
 
             if len(owners) > 0 and len(shells) >= self.MIN_CLIQUE_SIZE:
-                bad_cliques.append([ owners[0][1] ] + shells)
+                bad_cliques.append([[ owners[0][1] ] + shells, clique ])
 
         return random.choice(bad_cliques)
 
@@ -138,11 +141,11 @@ returns:
     `amount`: transaction amount, non-negative, rounded to two decimal points.
         """
         gen_amount: float = self.rng_gaussian(
-            mean = self.TRANSFER_CHUNK_MEDIAN / 2.0,
-            stdev = self.TRANSFER_CHUNK_MEDIAN / 10.0,
+            mean = self.XACT_CHUNK_MEDIAN / 2.0,
+            stdev = self.XACT_CHUNK_MEDIAN / 10.0,
         )
 
-        amount: float = round(self.TRANSFER_CHUNK_MEDIAN - gen_amount, 2)
+        amount: float = round(self.XACT_CHUNK_MEDIAN - gen_amount, 2)
         assert amount > 0.0, f"negative amount: {gen_amount}"
 
         return amount
@@ -157,7 +160,7 @@ Generate the timing for a transaction, based on a random variable.
 returns:
     `timing`: transaction datetime offset
         """
-        gen_offset: float = self.rng_poisson(lambda_ = self.INTER_ARRIVAL_MEDIAN)
+        gen_offset: float = self.rng_poisson(lambda_ = self.XACT_TIMING_MEDIAN)
         timing: datetime = self.start + timedelta(hours = gen_offset * 24.0)
 
         return timing
@@ -167,8 +170,6 @@ returns:
         self,
         net: Network,
         syn: SynData,
-        ubo_owner: str,
-        shell_corps: typing.Set[ str ],
         paths: typing.List[ str ],
         *,
         debug: bool = True,
@@ -193,7 +194,7 @@ returns:
                 self.finish = max(self.finish, timing)
 
                 if debug:
-                    ic(ubo_owner, shell_corps, amount, timing)
+                    ic(pair, amount, timing)
 
                 # accumulate results from these simulation steps
                 syn.add_transact({
@@ -206,30 +207,23 @@ returns:
                     syn.FRAUD_COL_NAME: True,
                 })
 
-                syn.add_fraud(
-                    subtotal,
-                    ubo_owner,
-                    shell_corps,
-                )
-
         return subtotal
 
 
-    def simulate (
+    def simulate_fraud (
         self,
         net: Network,
         syn: SynData,
         *,
         debug: bool = True,
-        ) -> float:
+        ) -> None:
         """
 Simulate patterns of tradecraft across sampled bad-actor networks.
-
-returns:
-    `subtotal`: the amount of money transferred through the network
         """
         # populate the bad-actor network
-        bad_clique: typing.List[ str ] = self.select_bad_actor(net.graph)
+        bad_actor: list = self.select_bad_actor(net.graph)
+        bad_clique: typing.List[ str ] = bad_actor[0]
+        self.bad_actors.update(set(bad_actor[1]))
 
         if debug:
             for node_id in bad_clique:
@@ -249,8 +243,8 @@ returns:
         # generate a target for transferred funds based on a random variable
         target_funds: float = round(
             self.rng_gaussian(
-                mean = self.TRANSFER_TOTAL_MEDIAN / 2.0,
-                stdev = self.TRANSFER_TOTAL_MEDIAN / 100.0,
+                mean = self.XACT_TOTAL_MEDIAN / 2.0,
+                stdev = self.XACT_TOTAL_MEDIAN / 100.0,
             ),
             2,
         )
@@ -273,10 +267,64 @@ returns:
             subtotal += self.run_one_fraud(
                 net,
                 syn,
-                ubo_owner,
-                shell_corps,
                 paths,
                 debug = debug,
             )
 
-        return subtotal
+        self.total_fraud += subtotal
+
+
+    def simulate_legit (
+        self,
+        net: Network,
+        syn: SynData,
+        *,
+        debug: bool = False,
+        ) -> None:
+        """
+Simulate legit B2B transfers.
+        """
+        # populate the set of B2B good-actor companies
+        shells: typing.List[ str ] = [
+            node_id
+            for node_id in net.graph.nodes
+            if node_id not in self.bad_actors
+            if net.graph.nodes[node_id]["country"] not in self.SANCTIONED_COUNTRIES
+            if net.graph.nodes[node_id]["kind"] == "entity"
+            if net.graph.nodes[node_id]["type"] == "ftm:Company"
+        ]
+
+        # generate a target for transferred funds based the inverse of the fraud rate
+        target_funds: float = self.total_fraud / self.APPROX_FRAUD_RATE
+
+        # iterate until reaching the target amount
+        subtotal: float = 0.0
+
+        while subtotal < target_funds:
+            pair: typing.List[ str ] = random.sample(shells, 2)
+            self.b2b_actors.update(set(pair))
+
+            src_id: str = pair[0]
+            dst_id: str = pair[1]
+
+            amount: float = self.gen_xact_amount()
+            subtotal += amount
+
+            timing: datetime = self.gen_xact_timing()
+
+            if debug:
+                ic(pair, amount, timing)
+
+            # accumulate results from these simulation steps
+            syn.add_transact({
+                "pay": net.graph.nodes[src_id]["name"],
+                "pay_country": net.graph.nodes[src_id]["country"],
+                "ben": net.graph.nodes[dst_id]["name"],
+                "ben_country": net.graph.nodes[dst_id]["country"],
+                "amount": amount,
+                "date": timing.date().isoformat(),
+                syn.FRAUD_COL_NAME: False,
+            })
+
+        if debug:
+            ic(subtotal)

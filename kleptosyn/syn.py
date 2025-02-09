@@ -33,8 +33,6 @@ Constructor.
         """
         self.config: dict = config
 
-        self.total_fraud: float = 0.0
-        self.bad_actors: typing.Set[ str ] = set()
         self.xact: typing.List[ dict ] = []
 
 
@@ -46,21 +44,6 @@ Constructor.
 Add a transaction to the results.
         """
         self.xact.append(transact)
-
-
-    def add_fraud (
-        self,
-        subtotal: float,
-        ubo_owner: str,
-        shell_corps: typing.Set[ str ],
-        ) -> None:
-        """
-Track one generated fraud pattern within the output data.
-        """
-        self.total_fraud += subtotal
-
-        self.bad_actors.update([ ubo_owner ])
-        self.bad_actors.update(shell_corps)
 
 
     def dump (
