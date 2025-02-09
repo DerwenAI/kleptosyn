@@ -3,7 +3,7 @@
 Synthetic data generation for investigative graphs based on patterns
 of bad-actor tradecraft.
 
-Input data sources:
+Default input data sources:
 
   * <https://www.opensanctions.org/>
   * <https://www.openownership.org/>
@@ -16,7 +16,7 @@ Ontologies used:
 
 ## Build an environment
 
-Based on using Python 3.11
+Based on using Python 3.11+
 
 ```bash
 python3 -m venv venv
@@ -25,11 +25,15 @@ python3 -m pip install -U pip wheel
 python3 -m pip install -r requirements.txt
 ```
 
-You will also need the CLI for Google Cloud to get the input datasets:
+This project uses [pre-commit hooks](https://pre-commit.com/) for code
+linting, etc.
+
+You will also need the CLI for Google Cloud to get the default input
+datasets:
 <https://cloud.google.com/storage/docs/discover-object-storage-gcloud>
 
 
-## Load the data
+## Load the default data
 
 ```bash
 gcloud storage cp gs://erkg/starterkit/open-sanctions.json .

@@ -26,4 +26,4 @@ repos:
     entry: ./venv/bin/pylint
     language: system
     types: [python]
-    args: [--ignore-patterns=venv]
+    args: [--ignore-patterns=venv,--max-line-length=120]
