@@ -39,6 +39,8 @@ TODO:
 from icecream import ic
 from kleptosyn import Network, Simulation, SynData, get_repo_version
 
+N_CRIMES: int = 3
+
 
 ######################################################################
 ## main entry point
@@ -58,9 +60,10 @@ if __name__ == "__main__":
     #net.report()
     #sys.exit(0)
 
-    sim.simulate_fraud(net, syn)
-    sim.simulate_legit(net, syn)
+    for _ in range(N_CRIMES):
+        sim.simulate_fraud(net, syn)
 
+    sim.simulate_legit(net, syn)
     syn.dump()
 
     ic(sim.finish, sim.total_fraud)
