@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Synthetic data generation.
-
 see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
+Synthetic data generation.
 """
 
 from datetime import datetime

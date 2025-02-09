@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Describe the Git repo version tags and commit hash for this module.
-
 see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
+Describe the Git repo version tags and commit hash for this module.
 """
 
 from os.path import dirname, abspath

@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Represent a graph of potential bad-actor networks.
-
 see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
+Represent a graph of potential bad-actor networks.
 """
 
 from collections import Counter

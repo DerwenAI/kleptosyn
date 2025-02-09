@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Package definitions for the `KleptoSyn` library.
-
 see copyright/license <https://github.com/DerwenAI/kleptosyn/blob/main/LICENSE>
+
+Package definitions for the `KleptoSyn` library.
 """
 
 from .sim import Simulation
