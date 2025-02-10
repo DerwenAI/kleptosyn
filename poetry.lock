@@ -1856,21 +1856,6 @@ files = [
 ]
 
 [[package]]
-name = "names-dataset"
-version = "3.1.0"
-description = "The python library to handle names"
-optional = false
-python-versions = "*"
-groups = ["main"]
-markers = "python_version >= \"3.12\" or python_version == \"3.11\""
-files = [
-    {file = "names-dataset-3.1.0.tar.gz", hash = "sha256:69eea12c9d97e1ae32b6db955bb9b39f7816eb2727d3c6abc726cb475ad160ac"},
-]
-
-[package.dependencies]
-pycountry = "*"
-
-[[package]]
 name = "nbclient"
 version = "0.10.2"
 description = "A client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor."
@@ -3454,4 +3439,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "f64538a2fff763c84a3d81315eaf74302196ef34638ef5596fdd174a7e505c17"
+content-hash = "38241a4785642a056d8933e2e55d4fe7a479eb1333fdb478fca496c1d876e5e3"
