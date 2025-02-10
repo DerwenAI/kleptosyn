@@ -72,17 +72,14 @@ wget https://storage.googleapis.com/erkg/starterkit/export.json
 wget https://raw.githubusercontent.com/cj2001/senzing_occrp_mapping_demo/refs/heads/main/occrp_17k.csv
 ```
 
-## run the demo script
+## run the demo script and notebooks
 
 ```bash
-./demo.py
+poetry run ./demo.py
 ```
 
-
-## run the notebooks
-
 ```bash
-./venv/bin/jupyter-lab
+poetry run jupyter-lab
 ```
 
 

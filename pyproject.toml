@@ -1,0 +1,35 @@
+[project]
+name = "kleptosyn"
+version = "0.0.1"
+description = ""
+authors = [
+    { name = "Paco Nathan", email = "paco@derwen.ai" }
+]
+
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "networkx (>=3.4.2,<4.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "pyvis (>=0.3.2,<0.4.0)",
+    "icecream (>=2.1.4,<3.0.0)",
+    "pycountry (>=24.6.1,<25.0.0)",
+    "names-dataset (>=3.1.0,<4.0.0)",
+    "gitpython (>=3.1.44,<4.0.0)",
+    "jupyterlab (>=4.3.5,<5.0.0)",
+    "ipympl (>=0.9.6,<0.10.0)",
+    "jupyterlab-execute-time (>=3.2.0,<4.0.0)",
+    "pre-commit (>=4.1.0,<5.0.0)",
+    "mypy (>=1.15.0,<2.0.0)",
+    "pylint (>=3.3.4,<4.0.0)",
+    "watermark (>=2.5.0,<3.0.0)"
+]
+
+
+[build-system]
+requires = [
+    "poetry-core >=2.0.0,<3.0.0"
+]
+
+build-backend = "poetry.core.masonry.api"

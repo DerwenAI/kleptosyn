@@ -18,7 +18,6 @@ import typing
 import unicodedata
 
 from icecream import ic  # type: ignore  # pylint: disable=E0401
-from names_dataset import NameDataset, NameWrapper
 import networkx as nx
 import pycountry
 
@@ -51,27 +50,6 @@ Constructor.
         """
         self.config: dict = config
         self.graph: nx.DiGraph = nx.DiGraph()
-
-
-    @classmethod
-    def eval_names_dataset (
-        cls,
-        ) -> None:
-        """
-Generate synthetic data about names, based in countries.
-<https://github.com/philipperemy/name-dataset>
-        """
-        nd: NameDataset = NameDataset()
-        ic(NameWrapper(nd.search("Philippe")).describe)
-
-        gen_names = nd.get_top_names(
-            n = 11,
-            use_first_names = False,
-            country_alpha2 = "IR",
-            #gender = "F",
-        )
-
-        ic(gen_names)
 
 
     def scrub_text (
