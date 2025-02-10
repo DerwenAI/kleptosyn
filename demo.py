@@ -48,7 +48,9 @@ N_CRIMES: int = 3
 if __name__ == "__main__":
     ic(get_repo_version())
 
-    config: dict = {}
+    config: dict = {
+        "start_date": "2013-06-18",
+    }
 
     sim: Simulation = Simulation(config)
     net: Network = Network(config)

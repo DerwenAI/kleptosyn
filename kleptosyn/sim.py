@@ -56,10 +56,13 @@ Constructor.
         self.config: dict = config
 
         self.rng: np.random.Generator = np.random.default_rng()
-        self.start: datetime = datetime.now()
+
+        self.start: datetime = datetime.fromisoformat(self.config["start_date"])
         self.finish: datetime = self.start
+
         self.b2b_actors: typing.Set[ str ] = set()
         self.bad_actors: typing.Set[ str ] = set()
+
         self.total_fraud: float = 0.0
 
 
@@ -95,6 +98,21 @@ Sample random numbers from an Exponential distribution.
 Sample random numbers from a Poisson distribution.
         """
         return float(self.rng.poisson(lam = lambda_, size = 1)[0])
+
+
+    @classmethod
+    def rng_uniform_datetime (
+        cls,
+        start: datetime,
+        finish: datetime,
+        ) -> datetime:
+        """
+Sample random dates between two `datetime` objects.
+        """
+        delta: timedelta = finish - start
+        rand_sec: int = random.randrange((delta.days * 24 * 60 * 60) + delta.seconds)
+
+        return start + timedelta(seconds = rand_sec)
 
 
     def select_bad_actor (
@@ -320,7 +338,7 @@ Simulate legit B2B transfers.
             amount: float = self.gen_xact_amount()
             subtotal += amount
 
-            timing: datetime = self.gen_xact_timing()
+            timing: datetime = self.rng_uniform_datetime(self.start, self.finish)
 
             if debug:
                 ic(pair, amount, timing)
