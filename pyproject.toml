@@ -1,12 +1,16 @@
 [project]
+
 name = "kleptosyn"
 version = "0.0.1"
-description = ""
+description = "Synthetic data generation for investigative graphs based on patterns of bad-actor tradecraft."
+
 authors = [
     { name = "Paco Nathan", email = "paco@derwen.ai" }
 ]
 
 readme = "README.md"
+license = { file = "LICENSE" }
+
 requires-python = ">=3.11"
 
 dependencies = [
@@ -16,19 +20,58 @@ dependencies = [
     "icecream (>=2.1.4,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
     "gitpython (>=3.1.44,<4.0.0)",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Indexing",
+    "Topic :: Text Processing :: Linguistic",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.11",
+]
+
+
+[project.urls]
+
+code = "https://github.com/DerwenAI/kleptosyn"
+
+
+[project.optional-dependencies]
+
+demo = [
     "jupyterlab (>=4.3.5,<5.0.0)",
-    "ipympl (>=0.9.6,<0.10.0)",
     "jupyterlab-execute-time (>=3.2.0,<4.0.0)",
+    "ipympl (>=0.9.6,<0.10.0)",
+    "watermark (>=2.5.0,<3.0.0)",
+]
+
+test = [
+    "pytest >= 7.4",
+]
+
+dev = [
     "pre-commit (>=4.1.0,<5.0.0)",
     "mypy (>=1.15.0,<2.0.0)",
     "pylint (>=3.3.4,<4.0.0)",
-    "watermark (>=2.5.0,<3.0.0)"
 ]
 
 
 [build-system]
+
 requires = [
-    "poetry-core >=2.0.0,<3.0.0"
+    "poetry-core >=2.0.0,<3.0.0",
 ]
 
 build-backend = "poetry.core.masonry.api"

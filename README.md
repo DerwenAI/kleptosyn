@@ -52,7 +52,7 @@ To set up an environment locally:
 git clone https://github.com/DerwenAI/kleptosyn.git
 cd kleptosyn
 
-poetry install
+poetry install --extras=demo
 ```
 
 The source code is currently based on Python 3.11 or later.
@@ -90,6 +90,13 @@ By default, the output results will be serialized as:
 
 
 ## development
+
+First, to set up the `dev` and `test` environment:
+
+```bash
+poetry install --extras=dev
+poetry install --extras=test
+```
 
 This project uses [`pre-commit`](https://pre-commit.com/) hooks for
 code linting, etc., whenever `git` is used to commit or push.

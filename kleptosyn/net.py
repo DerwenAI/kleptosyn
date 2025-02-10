@@ -11,7 +11,6 @@ from collections import Counter
 import json
 import pathlib
 import random
-import re
 import sys
 import traceback
 import typing
@@ -30,7 +29,6 @@ class Network:
     """
 Network to sample for simulated bad actors.
     """
-    EMPTY_QUOTE_PAT = re.compile("\".*\"")
     ER_ENTITY_PREFIX: str = "sz_"
 
     # graph semantics: <https://followthemoney.tech/explorer/>
