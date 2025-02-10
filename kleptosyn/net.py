@@ -31,8 +31,6 @@ class Network:
 Network to sample for simulated bad actors.
     """
     EMPTY_QUOTE_PAT = re.compile("\".*\"")
-
-    ER_MAX_MATCH_LEVEL: float = 11.0
     ER_ENTITY_PREFIX: str = "sz_"
 
     # graph semantics: <https://followthemoney.tech/explorer/>
@@ -291,7 +289,7 @@ Load the entity resolution results exported from Senzing.
                         rec_id,
                         kind = "resolved",
                         why = self.scrub_text(dat_rec["MATCH_KEY"]),
-                        prob = int(dat_rec["MATCH_LEVEL"]) / self.ER_MAX_MATCH_LEVEL,
+                        prob = int(dat_rec["MATCH_LEVEL"]),
                     )
 
                     ent_type = self.graph.nodes[rec_id]["type"]
@@ -328,7 +326,7 @@ Load the entity resolution results exported from Senzing.
                         rel_id,
                         kind = "related",
                         why = self.scrub_text(rel_rec["MATCH_KEY"]),
-                        prob = int(rel_rec["MATCH_LEVEL"]) / self.ER_MAX_MATCH_LEVEL,
+                        prob = int(rel_rec["MATCH_LEVEL"]),
                     )
 
     def repair (
