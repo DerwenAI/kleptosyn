@@ -17,7 +17,7 @@ The simulation uses the following process:
 
   1. Construct a _Network_ that represents bad-actor subgraphs
 
-     * Use `OpenSanctions (risk data) and `Open Ownership` (link data) for real-world UBO topologies
+     * Use `OpenSanctions` (risk data) and `Open Ownership` (link data) for real-world UBO topologies
      * Run `Senzing` entity resolution to generate a "backbone" for organizing the graph
      * Partition into subgraphs and run centrality measures to identify UBO owners
 
