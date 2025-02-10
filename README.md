@@ -17,20 +17,29 @@ The simulation uses the following process:
 
   1. Construct a _Network_ that represents bad-actor subgraphs
 
-    - Use `OpenSanctions` (risk data) and `OpenOwnership` (link data) for real-world UBO data
-    - Run `Senzing` entity resolution to generate a "backbone" for organizing the graph
-    - Partition into subgraphs and run centrality measures
+     * Use `OpenSanctions (risk data) and `Open Ownership` (link data) for real-world UBO topologies
+     * Run `Senzing` entity resolution to generate a "backbone" for organizing the graph
+     * Partition into subgraphs and run centrality measures to identify UBO owners
 
   2. Configure a _Simulation_ for generating patterns of bad-actor tradecraft
 
-    - Analyze the transactions of the OCCRP "Azerbaijani Laundromat" leaked dataset (event data)
-    - Sample probability distributions for shell topologies, transfer amounts, and transfer timing
-    - Generate a large portion of "legit" transfers (49:1 ratio)
+     * Analyze the transactions of the OCCRP "Azerbaijani Laundromat" leaked dataset (event data)
+     * Sample probability distributions for shell topologies, transfer amounts, and transfer timing
+     * Generate a large portion of "legit" transfers (49:1 ratio)
 
   3. Generate the _SynData_ (synthetic data) by applying the simulation on the network
 
-    - Track the generated bad-actor transactions
-    - Serialize the transactions and people/companies involved
+     * Track the generated bad-actor transactions
+     * Serialize the transactions and people/companies involved
+
+Note that much of the "heavy-lifting" here is _entity resolution_ performed by
+[Senzing](https://senzing.com/)
+and _network analytics_ performed by [NetworkX](https://senzing.com/).
+
+As simulations scale, both the data generation and the fraud pattern
+detection would benefit by using the
+[cuGraph](https://github.com/rapidsai/cugraph) high performance
+back-end for NetworkX.
 
 
 ## build an environment
@@ -38,8 +47,12 @@ The simulation uses the following process:
 Based on using Python 3.11+
 
 ```bash
+git clone https://github.com/DerwenAI/kleptosyn.git
+cd kleptosyn
+
 python3 -m venv venv
 source venv/bin/activate
+
 python3 -m pip install -U pip wheel
 python3 -m pip install -r requirements.txt
 ```
@@ -53,7 +66,9 @@ linting, etc.
 ```bash
 wget https://raw.githubusercontent.com/Kineviz/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-sanctions.json
 wget https://raw.githubusercontent.com/Kineviz/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-ownership.json
+
 wget https://storage.googleapis.com/erkg/starterkit/export.json
+
 wget https://raw.githubusercontent.com/cj2001/senzing_occrp_mapping_demo/refs/heads/main/occrp_17k.csv
 ```
 
