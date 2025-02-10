@@ -17,6 +17,7 @@ import traceback
 import typing
 import unicodedata
 
+from charset_normalizer import from_bytes
 from icecream import ic  # type: ignore  # pylint: disable=E0401
 import networkx as nx
 import pycountry
@@ -65,13 +66,15 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
 
         #return str(unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("utf-8").replace("\u200b", ""))
 
-        min_scrub: str = unicodedata.normalize("NFKD", text).replace("\u200b", "").strip()
-        max_scrub: str = min_scrub.encode("ascii", "ignore").decode("utf-8").strip()
+        min_scrub: str = unicodedata.normalize(
+            "NFKD",
+            str(from_bytes(str.encode(text)).best())
+        ).replace("\u200b", "").strip()
 
-        if len(max_scrub) < 1 or self.EMPTY_QUOTE_PAT.match(max_scrub) is not None:
-            return min_scrub
+        #min_scrub: str = unicodedata.normalize("NFKD", text).replace("\u200b", "").strip()
+        #max_scrub: str = min_scrub.encode("ascii", "ignore").decode("utf-8").strip()
 
-        return max_scrub
+        return min_scrub
 
 
     def extract_name (
@@ -216,7 +219,7 @@ Extract country codes from the input data records.
         """
 Load a Senzing formatted JSON dataset.
         """
-        with open(dat_file, "r", encoding = "utf-8") as fp:
+        with open(dat_file, "rb") as fp:
             for line in fp:
                 dat: dict = json.loads(line)
                 rec_id: str = dat["RECORD_ID"]
@@ -230,7 +233,7 @@ Load a Senzing formatted JSON dataset.
                     country = self.extract_country(dat),
                 )
 
-                # fuck
+                # FOO
                 # "RELATIONSHIPS": [{"REL_POINTER_DOMAIN": "OOR", "REL_POINTER_KEY": "12052062250481936308"
 
 
@@ -242,7 +245,7 @@ Load a Senzing formatted JSON dataset.
         """
 Load the entity resolution results exported from Senzing.
         """
-        with open(er_export_file, "r", encoding = "utf-8") as fp:
+        with open(er_export_file, "rb") as fp:
             for line in fp:
                 dat: dict = json.loads(line)
                 ent_id: str = self.ER_ENTITY_PREFIX + str(dat["RESOLVED_ENTITY"]["ENTITY_ID"]).strip()
@@ -381,9 +384,10 @@ specified entity.
         graph_file: pathlib.Path = pathlib.Path("graph.json"),
         ) -> None:
         """
-Serialize the bad network.
+Serialize the bad-actor network.
+NB: this is considered the best way to handle JSON file writes with mixed charsets.
         """
-        with open(graph_file, "w", encoding = "utf-8") as fp:
+        with open(graph_file, "w") as fp:  # pylint: disable=W1514
             dat: dict = nx.node_link_data(
                 self.graph,
                 edges = "edges", # for forward compatibility
@@ -393,6 +397,7 @@ Serialize the bad network.
                 dat,
                 fp,
                 indent = 2,
+                ensure_ascii = False,
             )
 
 
