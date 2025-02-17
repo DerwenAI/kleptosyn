@@ -100,6 +100,8 @@ poetry install --extras=test
 
 This project uses [`pre-commit`](https://pre-commit.com/) hooks for
 code linting, etc., whenever `git` is used to commit or push.
+Be sure to install *after* the `poetry install` is performed.
+
 To run `pre-commit` explicitly:
 
 ```bash
