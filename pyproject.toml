@@ -20,6 +20,7 @@ dependencies = [
     "icecream (>=2.1.4,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
     "gitpython (>=3.1.44,<4.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)",
 ]
 
 classifiers = [
@@ -75,3 +76,8 @@ requires = [
 ]
 
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.4"
+

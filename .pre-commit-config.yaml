@@ -28,7 +28,7 @@ repos:
   hooks:
   - id: pylint
     name: pylint
-    entry: ./venv/bin/pylint
+    entry: pylint
     language: system
     types: [python]
     args: [--ignore-patterns=venv,--max-line-length=120]

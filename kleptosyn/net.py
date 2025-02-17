@@ -16,7 +16,7 @@ import traceback
 import typing
 import unicodedata
 
-from charset_normalizer import from_bytes
+#from charset_normalizer import from_bytes
 from icecream import ic  # type: ignore  # pylint: disable=E0401
 import networkx as nx
 import pycountry
@@ -66,7 +66,8 @@ Courtesy of <https://github.com/DerwenAI/pytextrank>
 
         min_scrub: str = unicodedata.normalize(
             "NFKD",
-            str(from_bytes(str.encode(text)).best())
+            text,
+            #str(from_bytes(str.encode(text)).best()) # unneeded when unicode issues are fixed in the data
         ).replace("\u200b", "").strip()
 
         #min_scrub: str = unicodedata.normalize("NFKD", text).replace("\u200b", "").strip()

@@ -28,7 +28,8 @@ Steps (so far):
 
 TODO:
 
-  - have Clair eval to run ER + KG + algos to identify fraud
+  - have Clair and Prashanth eval to run ER + KG + algos to identify fraud
+  - populate entity properties based on <https://github.com/senzing-garage/sz-graph-export/>
   - load network motif patterns representing bad-actor tradecraft
   - generate entities for shell corp intermediary organizations
      + located within tax-haven countries

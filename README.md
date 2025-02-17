@@ -61,8 +61,8 @@ The source code is currently based on Python 3.11 or later.
 ## load the default data
 
 ```bash
-wget https://raw.githubusercontent.com/Kineviz/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-sanctions.json
-wget https://raw.githubusercontent.com/Kineviz/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-ownership.json
+wget https://raw.githubusercontent.com/DerwenAI/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-sanctions.json
+wget https://raw.githubusercontent.com/DerwenAI/senzing_starter_kit/refs/heads/main/senzing_rootfs/data/open-ownership.json
 
 wget https://storage.googleapis.com/erkg/starterkit/export.json
 
