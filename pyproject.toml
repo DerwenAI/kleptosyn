@@ -21,6 +21,7 @@ dependencies = [
     "pycountry (>=24.6.1,<25.0.0)",
     "gitpython (>=3.1.44,<4.0.0)",
     "tqdm (>=4.67.1,<5.0.0)",
+    "scipy (>=1.15.2,<2.0.0)",
 ]
 
 classifiers = [
@@ -80,4 +81,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.3.4"
-
