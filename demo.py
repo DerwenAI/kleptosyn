@@ -37,6 +37,7 @@ TODO:
      + use `name-dataset` and `random-address` to generate intermediares
 """
 
+from dotenv import dotenv_values
 from icecream import ic
 from kleptosyn import Network, Simulation, SynData, get_repo_version
 
@@ -48,10 +49,7 @@ N_CRIMES: int = 3
 
 if __name__ == "__main__":
     ic(get_repo_version())
-
-    config: dict = {
-        "start_date": "2013-06-18",
-    }
+    config: dict = dotenv_values(".env")
 
     sim: Simulation = Simulation(config)
     net: Network = Network(config)

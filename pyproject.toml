@@ -1,3 +1,11 @@
+[build-system]
+
+requires = [
+    "poetry-core >=2.0.0,<3.0.0",
+]
+
+build-backend = "poetry.core.masonry.api"
+
 [project]
 
 name = "kleptosyn"
@@ -23,6 +31,7 @@ dependencies = [
     "tqdm (>=4.67.1,<5.0.0)",
     "scipy (>=1.15.2,<2.0.0)",
     "seaborn (>=0.13.2,<0.14.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
 ]
 
 classifiers = [
@@ -70,15 +79,21 @@ dev = [
     "pylint (>=3.3.4,<4.0.0)",
 ]
 
+[tool.poetry]
 
-[build-system]
-
-requires = [
-    "poetry-core >=2.0.0,<3.0.0",
+name = "poetry-precommit"
+version = "0.1.0"
+description = ""
+authors = [ "Paco Nathan <paco@derwen.ai>" ]
+readme = "README.md"
+packages = [
+    {include = "poetry_precommit"}
 ]
 
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.dependencies]
 
+pre-commit = "4.1.0"
 
 [tool.poetry.group.dev.dependencies]
+
 pylint = "^3.3.4"

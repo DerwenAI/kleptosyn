@@ -1,3 +1,7 @@
+# currently we commit an example `.env` file
+#.env
+
+
 # local files
 *~
 azeri.csv
@@ -142,7 +146,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
