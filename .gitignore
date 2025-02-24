@@ -6,6 +6,7 @@ export.json
 graph.json
 networkx-pyvis.html
 occrp.html
+occrp.json
 open-ownership.json
 open-sanctions.json
 transact.csv
