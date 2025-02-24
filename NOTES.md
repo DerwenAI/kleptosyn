@@ -87,64 +87,73 @@ In general, see the HF collection for papers which have been published on _Arxiv
 
 Other helpful sources include:
 
-> "Financial Crime and Corruption Network Motifs"  
-Russell Jurney (2024-10-02)  
+> "Mule accounts and money laundering: How to eliminate blindspots in detection and investigation"
+Linkurious (2024-07-08)
+<https://linkurious.com/blog/mule-account-money-laundering/>
+
+> "Cyclic motifs in the Sardex monetary network"
+George Iosifidis, et al. (2018-10-22)
+<https://doi.org/10.1038/s41562-018-0450-0>
+<https://humannaturelab.net/sites/default/files/pdf/paper/Cyclic-motifs-in-the-Sardex-monetary-network.pdf>
+
+> "Financial Crime and Corruption Network Motifs"
+Russell Jurney (2024-10-02)
 <https://blog.graphlet.ai/financial-crime-and-corruption-network-motifs-4cf2e8e10eb5>
 
-> "Walks, Paths, Circuits, and Cycles"  
-Jennifer Shloming (2022-09-24)  
+> "Walks, Paths, Circuits, and Cycles"
+Jennifer Shloming (2022-09-24)
 <https://jennifer_shloming.gitlab.io/intro-graph-theory/walks-paths-circuits-and-cycles.html>
 
-> "Graph Levels of Detail"  
-Paco Nathan (2023-11-12)  
+> "Graph Levels of Detail"
+Paco Nathan (2023-11-12)
 <https://blog.derwen.ai/graph-levels-of-detail-ea4226abba55>
 
-> "Curating Grounded Synthetic Data with Global Perspectives for Equitable AI"  
-Elin Törnquist, Rob Caulk (2024-06-18)  
+> "Curating Grounded Synthetic Data with Global Perspectives for Equitable AI"
+Elin Törnquist, Rob Caulk (2024-06-18)
 <https://arxiv.org/abs/2406.10258>
 
-> "Cypher Manual: Patterns"  
-Neo4j  
+> "Cypher Manual: Patterns"
+Neo4j
 <https://neo4j.com/docs/cypher-manual/current/patterns/>
 
-> "Realistic Synthetic Graph Generation"  
-Christina Eleftheriou (2024-03-04)  
+> "Realistic Synthetic Graph Generation"
+Christina Eleftheriou (2024-03-04)
 <http://bit.ly/4h4qb44>
 
 > "Representations of Networks"
-Eric Bridgeford, et al. (2022)  
+Eric Bridgeford, et al. (2022)
 <https://docs.neurodata.io/graph-stats-book/representations/ch4/network-representations.html>
 
-> "Activity motifs reveal principles of timing in transcriptional control of the yeast metabolic network"  
-Gal Chechik, et al.  (2008-11-25)  
+> "Activity motifs reveal principles of timing in transcriptional control of the yeast metabolic network"
+Gal Chechik, et al.  (2008-11-25)
 <https://pmc.ncbi.nlm.nih.gov/articles/PMC2651818/>
 
-> "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"  
-Jordan Matelsky, et al. (2021-06-21)  
+> "DotMotif: an open-source tool for connectome subgraph isomorphism search and graph queries"
+Jordan Matelsky, et al. (2021-06-21)
 <https://www.nature.com/articles/s41598-021-91025-5>
 
-> "InGram: Inductive Knowledge Graph Embedding via Relation Graphs"  
-Jaejun Lee, et al. (2023-05-31)  
+> "InGram: Inductive Knowledge Graph Embedding via Relation Graphs"
+Jaejun Lee, et al. (2023-05-31)
 <https://arxiv.org/abs/2305.19987>
 
-> "Graphlets correct for the topological information missed by random walks"  
-Sam Windels, et al., (2024-05-23)  
+> "Graphlets correct for the topological information missed by random walks"
+Sam Windels, et al., (2024-05-23)
 <https://arxiv.org/abs/2405.14194>
 
-> "Peregrine: A Pattern-Aware Graph Mining System"  
-Kasra Jamshidi, et al., (2020-04-04)  
+> "Peregrine: A Pattern-Aware Graph Mining System"
+Kasra Jamshidi, et al., (2020-04-04)
 <https://arxiv.org/abs/2004.02369>
 
-> "OFFER: A Motif Dimensional Framework for Network Representation"  
-Shuo Yu, et al. (2020-08-27)  
+> "OFFER: A Motif Dimensional Framework for Network Representation"
+Shuo Yu, et al. (2020-08-27)
 <https://arxiv.org/abs/2008.12010>
 
-> "motifr"  
-Mario Angst, Tim Seppelt (2020-12-30)  
+> "motifr"
+Mario Angst, Tim Seppelt (2020-12-30)
 <https://marioangst.github.io/motifr/>
 
-> "3 Examples of Motifs with Spark GraphFrames"  
-Steve Russo (2022-06-17)  
+> "3 Examples of Motifs with Spark GraphFrames"
+Steve Russo (2022-06-17)
 <https://betterprogramming.pub/3-examples-of-motifs-with-spark-graphframes-db873b3fdc8a>
 
 
