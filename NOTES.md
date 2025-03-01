@@ -4,6 +4,14 @@ Synthetic data generation for investigative graphs based on patterns
 of bad-actor tradecraft.
 
 
+## TODOs
+
+  * Leverage the BODS vocabulary <https://www.openownership.org/en/publications/rdf-vocabulary-for-the-beneficial-ownership-data-standard/> for Open Ownership data
+  * Make better use of FtM vocabulary https://discuss.opensanctions.org/t/wip-better-workflow-for-neo4j-data-conversion/64 for OpenSanctions data
+  * Update the parameters of statistical models used for simulation and generating transfers
+  * How much inter-drain "scramble" occurs in the OCCRP data?
+
+
 ## Approximated fraud rate
 
 > estimated $3T/year in dark money flows.
