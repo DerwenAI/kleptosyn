@@ -52,7 +52,7 @@ To set up an environment locally:
 git clone https://github.com/DerwenAI/kleptosyn.git
 cd kleptosyn
 
-poetry install --extras=demo
+poetry install --no-root --extras=demo
 ```
 
 The source code is currently based on Python 3.11 or later.
