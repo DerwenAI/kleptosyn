@@ -1657,6 +1657,54 @@ files = [
 ]
 
 [[package]]
+name = "kuzu"
+version = "0.8.2"
+description = "Highly scalable, extremely fast, easy-to-use embeddable graph database"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "python_version >= \"3.12\" or python_version == \"3.11\""
+files = [
+    {file = "kuzu-0.8.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:78bcdf6cc7b130bce8b307709e8d7bddd2e9104b2b696a9dc52574556e754570"},
+    {file = "kuzu-0.8.2-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:b42e3e9b1eacf830700287b05e96f9455b89dd4140085053e6c86b32c61e8d5c"},
+    {file = "kuzu-0.8.2-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:cf06c602dc0231268d9cfa56a62afef15f8fca3be1ccd2cad22047a14bff4ae0"},
+    {file = "kuzu-0.8.2-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:50a873e7cd0c2e8e3093e9af14cffb14e49f1f67eceb32df3d0454ce101402d3"},
+    {file = "kuzu-0.8.2-cp310-cp310-win_amd64.whl", hash = "sha256:4d36261444d31432606f3f3ed00624f1a3a8edcf7d830564c72b76ffbdf4d318"},
+    {file = "kuzu-0.8.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6c1694c6d1b19c46ad5d416cac429ccf1fe91aca4d367664e3aa0afa59800f93"},
+    {file = "kuzu-0.8.2-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:00156c64523a1377ffced998bdb031709336f90543da69544c0ab4b40d533692"},
+    {file = "kuzu-0.8.2-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:bc75f26afe8815b046cfb0d931303da6c36ce3afb49d4ae18a3899f23e62020f"},
+    {file = "kuzu-0.8.2-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5f0de6910724a74cc492354e903cf76db78b6353eef1e2edfa0b79d600c3c572"},
+    {file = "kuzu-0.8.2-cp311-cp311-win_amd64.whl", hash = "sha256:56e99c39a725943aa7ad96ada8f29706da3d53cc98385f2c663b8ea026f0dce3"},
+    {file = "kuzu-0.8.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:adcc250b34963a6eea62b59d47a091018d83e61fb2e95552795ab61f103052be"},
+    {file = "kuzu-0.8.2-cp312-cp312-macosx_11_0_x86_64.whl", hash = "sha256:f72036924466143675980baed02a26c0fca15b6254c11de9a9c18d28fe66247e"},
+    {file = "kuzu-0.8.2-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a2fd7895fdfd9df880091d32bfb79c148f849659c67e2b9e185f952a6bde9139"},
+    {file = "kuzu-0.8.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:68486e291aa8a61264be7e31233ec34eeb6da2402f4b980c3f2b67f9ccbbea3a"},
+    {file = "kuzu-0.8.2-cp312-cp312-win_amd64.whl", hash = "sha256:7cce7d06e6f09cd488c62be7cafe78752b037ed9e6585ed3da9df029104b1987"},
+    {file = "kuzu-0.8.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:aa0495f856f2e5f5067e281dab3fbc170aba0721d1f56156a8cd9fa50e706f91"},
+    {file = "kuzu-0.8.2-cp313-cp313-macosx_11_0_x86_64.whl", hash = "sha256:823577b472ba63c3b36e5ff81e2b744736f9eaf0b71585c247f3defc9d268f53"},
+    {file = "kuzu-0.8.2-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:bde76f38d293f49ad283a4831bd32d41f185b93a75d388d67f9b8996678203e9"},
+    {file = "kuzu-0.8.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:cdb189012613ecd26630096796e3817c260deea85782e764309cd36b2c39dac5"},
+    {file = "kuzu-0.8.2-cp313-cp313-win_amd64.whl", hash = "sha256:71fb98721f9c46f960a5c3baea6b083026485c4b9a3e74ab01418243e29e3753"},
+    {file = "kuzu-0.8.2-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8e12726af2cb552ab7b60e2b4312469359bb3b4b45ddbcfb75220def4be6f566"},
+    {file = "kuzu-0.8.2-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:055f2cd9741bf39161f9ccff80428f8fb80b1910b2450b05bbe848487ba694f5"},
+    {file = "kuzu-0.8.2-cp37-cp37m-macosx_11_0_x86_64.whl", hash = "sha256:18cb3da3a650f8dfde3639fbd6319a5ad6f98f60689c5dd96d20d8d1fc184d4c"},
+    {file = "kuzu-0.8.2-cp37-cp37m-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e55a8fddc21ac3e27b3cf2815d93264dd3c89e9ad8c7f3960d51bdfe48a02709"},
+    {file = "kuzu-0.8.2-cp37-cp37m-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4d93600aceacdd7903aa39f016cb641811f96e4825b027a135aaaa1d82e23d24"},
+    {file = "kuzu-0.8.2-cp37-cp37m-win_amd64.whl", hash = "sha256:68601d9e741c7815c3d3f46a9c6884853388bcc6920945f069d5dc4f9492c9c5"},
+    {file = "kuzu-0.8.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:32d7ff56d793df27f76129b8b15bd85c940e59bcb67acd189b6a5ed1af5e8b44"},
+    {file = "kuzu-0.8.2-cp38-cp38-macosx_11_0_x86_64.whl", hash = "sha256:5e639f24be2fca78bf3890774f273aa1a6b149bfdbeb5c7e966e03b8f610be98"},
+    {file = "kuzu-0.8.2-cp38-cp38-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:1caf46e2721dabed94b65cdcf3990551af2f3913c3f2dcd39f3e5397f0134243"},
+    {file = "kuzu-0.8.2-cp38-cp38-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a5333c9e4557ccbfef7b822793ec382848411c8d11fdee063064b41bd1828404"},
+    {file = "kuzu-0.8.2-cp38-cp38-win_amd64.whl", hash = "sha256:765a8bd4c5b9d24583eb8aaa20ecd753d78220138a82bf643ec592ffb8128298"},
+    {file = "kuzu-0.8.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:3a215ff235d17a41c50d1cf2bd8e67a196eff32f23e59d989b1a40e6192f2008"},
+    {file = "kuzu-0.8.2-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:074b5440186e4214b653d46f8d5a15d4b4cae1185d4656eaf598fe9b840fcdca"},
+    {file = "kuzu-0.8.2-cp39-cp39-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:32303a9533674a35e52d429f1446a82e2fc97c423618bc86aaafef1d4d2621e4"},
+    {file = "kuzu-0.8.2-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0baea115bc55c8ed710f2beae8f02e46cf2bac42326b4e2c3acd25a76031f59d"},
+    {file = "kuzu-0.8.2-cp39-cp39-win_amd64.whl", hash = "sha256:70e031131c5b8e327edd63993b05fb04196b74d0ade1baf0f4005968610310ed"},
+    {file = "kuzu-0.8.2.tar.gz", hash = "sha256:68ad72b3ef6a32a41ecfa955fa4ca9ca0c8a36d3a1bc13e34cc70c971b2b8ca7"},
+]
+
+[[package]]
 name = "markupsafe"
 version = "3.0.2"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -3720,4 +3768,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "9bb9ccc03f200ee8dd2978f2bf1c6aac2064aab31d0d84f6ec67183b56d4c6de"
+content-hash = "173617a4a5776a3f174a91096e123ce36971b3aec1898e77eb6dec6bc09c9009"

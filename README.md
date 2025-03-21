@@ -84,6 +84,7 @@ The notebooks include:
   + `visualize.ipynb`: interactive visualization of the structure of the UBO graph
   + `occrp.ipynb`: network science and queueing theory applied to analyze the OCCRP money transfer data
   + `classify.ipynb`: training a classifier model to predict the roles of shell companies
+  + `load_kuzu.ipynb`: load the UBO graph datasets plus entity resolution into KùzuDB
 
 
 ## use the results

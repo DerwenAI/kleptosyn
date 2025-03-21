@@ -1,8 +1,8 @@
 # currently we commit an example `.env` file
 #.env
 
-
 # local files
+db/
 *~
 azeri.csv
 occrp_17k.csv
