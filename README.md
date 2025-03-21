@@ -41,6 +41,9 @@ detection would benefit by using the
 [`cuGraph`](https://github.com/rapidsai/cugraph) high performance
 back-end for `NetworkX`.
 
+We also show an integration with KùzuDB](https://kuzudb.com/),
+an embeddable, scalable, extremely fast graph database.
+
 
 ## build a local environment
 
