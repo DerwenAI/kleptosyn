@@ -34,7 +34,7 @@ dependencies = [
     "dotenv (>=0.9.9,<0.10.0)",
     "scikit-learn (>=1.6.1,<2.0.0)",
     "jinja2 (==3.1.6)",
-    "kuzu (>=0.8.2,<0.9.0)",
+    "kuzu (>=0.9.0,<0.10.0)",
 ]
 
 classifiers = [
