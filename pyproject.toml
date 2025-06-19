@@ -24,18 +24,15 @@ requires-python = ">=3.11"
 dependencies = [
     "networkx (>=3.4.2,<4.0.0)",
     "pandas (>=2.2.3,<3.0.0)",
-    "pyvis (>=0.3.2,<0.4.0)",
     "icecream (>=2.1.4,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
     "gitpython (>=3.1.44,<4.0.0)",
     "tqdm (>=4.67.1,<5.0.0)",
     "scipy (>=1.15.2,<2.0.0)",
-    "seaborn (>=0.13.2,<0.14.0)",
     "dotenv (>=0.9.9,<0.10.0)",
     "scikit-learn (>=1.6.1,<2.0.0)",
     "jinja2 (==3.1.6)",
     "kuzu (>=0.9.0,<0.10.0)",
-    "pre-commit (>=4.2.0,<5.0.0)",
 ]
 
 classifiers = [
@@ -70,17 +67,16 @@ demo = [
     "jupyterlab (>=4.3.5,<5.0.0)",
     "jupyterlab-execute-time (>=3.2.0,<4.0.0)",
     "ipympl (>=0.9.6,<0.10.0)",
+    "pyvis (>=0.3.2,<0.4.0)",
+    "seaborn (>=0.13.2,<0.14.0)",
     "watermark (>=2.5.0,<3.0.0)",
-]
-
-test = [
-    "pytest >= 7.4",
 ]
 
 dev = [
     "pre-commit (>=4.1.0,<5.0.0)",
     "mypy (>=1.15.0,<2.0.0)",
     "pylint (>=3.3.4,<4.0.0)",
+    "pytest >= 7.4",
 ]
 
 [tool.poetry]
@@ -97,6 +93,17 @@ packages = [
 [tool.poetry.dependencies]
 
 
+[tool.poetry.group.demo.dependencies]
+
+jupyterlab = "^4.3.5"
+jupyterlab-execute-time = "^3.2.0"
+ipympl = "^0.9.6"
+pyvis = "^0.3.2"
+seaborn = "^0.13.2"
+watermark = "^2.5.0"
+
+
 [tool.poetry.group.dev.dependencies]
 
+pytest = "^7.4"
 pylint = "^3.3.4"
