@@ -9,7 +9,7 @@ data/occrp.json
 data/graph.json
 data/transact.csv
 data/entities.csv
-networkx-pyvis.html
+fraud.html
 occrp.html
 
 # Byte-compiled / optimized / DLL files
