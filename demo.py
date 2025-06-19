@@ -50,7 +50,7 @@ if __name__ == "__main__":
     ic(sim.finish, sim.total_fraud)
 
 
-"""
+"""  # pylint: disable=W0105
 Steps (so far):
 
   * load the Senzing ER results for these datasets
