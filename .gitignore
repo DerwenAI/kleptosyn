@@ -4,17 +4,13 @@
 # local files
 db/
 *~
-azeri.csv
-occrp_17k.csv
-export.json
-graph.json
+data/azeri.csv
+data/occrp.json
+data/graph.json
+data/transact.csv
+data/entities.csv
 networkx-pyvis.html
 occrp.html
-occrp.json
-open-ownership.json
-open-sanctions.json
-transact.csv
-entities.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

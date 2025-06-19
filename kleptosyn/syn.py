@@ -59,9 +59,9 @@ Add an entity to the results.
 
     def dump (
         self,
+        xact_file: pathlib.Path,
+        ents_file: pathlib.Path,
         *,
-        xact_file: pathlib.Path = pathlib.Path("transact.csv"),
-        ents_file: pathlib.Path = pathlib.Path("entities.csv"),
         debug: bool = True,
         ) -> None:
         """

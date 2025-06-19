@@ -7,10 +7,20 @@ of bad-actor tradecraft.
 ## TODOs
 
   * Update the parameters of statistical models used for simulation and generating transfers
-  * How much inter-drain "scramble" occurs in the OCCRP data?
-  * Refactor the `sim.py` module to use Py abstract base classes <https://docs.python.org/3/library/abc.html>
   * Leverage the BODS vocabulary <https://www.openownership.org/en/publications/rdf-vocabulary-for-the-beneficial-ownership-data-standard/> for Open Ownership data
   * Make better use of FtM vocabulary <https://discuss.opensanctions.org/t/wip-better-workflow-for-neo4j-data-conversion/64> for OpenSanctions data
+  * How much inter-drain "scramble" occurs in the OCCRP data?
+  * Refactor the `kleptosyn/sim.py` module to use Py abstract base classes <https://docs.python.org/3/library/abc.html>
+
+For the `demo.py` script:
+
+  - have Clair and Prashanth eval to run ER + KG + algos to identify fraud
+  - populate entity properties based on <https://github.com/senzing-garage/sz-graph-export/>
+  - load network motif patterns representing bad-actor tradecraft
+  - generate entities for shell corp intermediary organizations
+     + located within tax-haven countries
+     + apply _channel separation_ to obscure beneficial owners
+     + use `name-dataset` and `random-address` to generate intermediares
 
 
 ## Approximated fraud rate

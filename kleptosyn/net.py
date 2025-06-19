@@ -238,8 +238,7 @@ Load a Senzing formatted JSON dataset.
 
     def load_er_export (  # pylint: disable=R0914
         self,
-        *,
-        er_export_file: pathlib.Path = pathlib.Path("export.json"),
+        er_export_file: pathlib.Path,
         ) -> None:
         """
 Load the entity resolution results exported from Senzing.
@@ -335,9 +334,12 @@ to construct a graph to sample as simulated bad actors.
   - OpenSanctions (risk data)
   - Open Ownership (link data)
         """
-        self.load_dataset(pathlib.Path("open-sanctions.json"))
-        self.load_dataset(pathlib.Path("open-ownership.json"))
-        self.load_er_export()
+        data_path: pathlib.Path = pathlib.Path(self.config["data_path"])
+
+        self.load_dataset(data_path / "open-sanctions.json")
+        self.load_dataset(data_path / "open-ownership.json")
+
+        self.load_er_export(data_path / "export.json")
         self.repair()
 
         # use centrality to rank entities (e.g., as influentual UBOs)
@@ -379,8 +381,7 @@ specified entity.
 
     def dump (
         self,
-        *,
-        graph_file: pathlib.Path = pathlib.Path("graph.json"),
+        graph_file: pathlib.Path,
         ) -> None:
         """
 Serialize the bad-actor network.
