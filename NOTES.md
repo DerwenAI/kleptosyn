@@ -6,6 +6,12 @@ of bad-actor tradecraft.
 
 ## TODOs
 
+  1. Isolate to one subgraph as a suspected fraud ring, e.g., Badshah
+  2. Generate transactions to simulate money laundering tradecraft
+  3. Backfill with "legit" transactions
+
+
+
   * Update the parameters of statistical models used for simulation and generating transfers
   * Leverage the BODS vocabulary <https://www.openownership.org/en/publications/rdf-vocabulary-for-the-beneficial-ownership-data-standard/> for Open Ownership data
   * Make better use of FtM vocabulary <https://discuss.opensanctions.org/t/wip-better-workflow-for-neo4j-data-conversion/64> for OpenSanctions data
@@ -200,39 +206,3 @@ data is:
      - generate transactions
   5. Serialize output
      - format: node-link, JSONL, Parquet, etc.
-
-
-## Notification list
-
-  * Clair Sullivan
-<https://github.com/cj2001>
-
-  * Brad Rees @ NVIDIA cuGraph
-<https://github.com/BradReesWork>
-
-  * Friedrich Lindenberg @ OpenSanctiosn
-<https://github.com/pudo>
-
-  * Stephen Abbott Pugh @ OpenOwnership
-<https://github.com/StephenAbbott>
-
-  * Zornitsa Manolova @ GLEIF
-<https://github.com/GLEIF>
-
-  * Russ Jurney @ Graphlet.ai
-<https://github.com/rjurney>
-
-  * Allison Miller
-<https://www.linkedin.com/feed/update/urn:li:activity:7285305359005569024/>
-
-  * Amy Hodler @ GraphGeeks.org
-<https://github.com/amyhodler>
-
-  * Andreas Kollegger @ Neo4j
-<https://github.com/akollegger>
-
-  * Jean Villedieu @ Linkurious
-<https://linkurious.com/>
-
-  * Alan Brown @ Aptitude Global
-<https://www.aptitudeglobal.com/>
