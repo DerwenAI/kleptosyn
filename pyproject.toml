@@ -9,7 +9,7 @@ build-backend = "poetry.core.masonry.api"
 [project]
 
 name = "kleptosyn"
-version = "0.0.1"
+version = "0.0.2"
 description = "Synthetic data generation for investigative graphs based on patterns of bad-actor tradecraft."
 
 authors = [
@@ -22,17 +22,17 @@ license = { file = "LICENSE" }
 requires-python = ">=3.11"
 
 dependencies = [
-    "networkx (>=3.4.2,<4.0.0)",
-    "pandas (>=2.2.3,<3.0.0)",
-    "icecream (>=2.1.4,<3.0.0)",
-    "pycountry (>=24.6.1,<25.0.0)",
-    "gitpython (>=3.1.44,<4.0.0)",
-    "tqdm (>=4.67.1,<5.0.0)",
-    "scipy (>=1.15.2,<2.0.0)",
-    "dotenv (>=0.9.9,<0.10.0)",
-    "scikit-learn (>=1.6.1,<2.0.0)",
-    "jinja2 (==3.1.6)",
-    "kuzu (>=0.9.0,<0.10.0)",
+    "networkx (>=3.5,<4.0)",
+    "pandas (>=2.2,<3.0)",
+    "icecream (>=2.2,<3.0)",
+    "pycountry (>=24.6,<25.0)",
+    "gitpython (>=3.1,<4.0)",
+    "tqdm (>=4.67,<5.0)",
+    "scipy (>=1.15,<2.0)",
+    "dotenv (>=0.9,<0.10)",
+    "scikit-learn (>=1.6,<2.0)",
+    "jinja2 (==3.1)",
+    "kuzu (>=0.9,<0.10)",
 ]
 
 classifiers = [
