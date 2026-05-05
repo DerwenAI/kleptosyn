@@ -57,11 +57,3 @@ generate "event" data as _synthetic data_.
 
 BTW, for more examples of this kind of approach, see
 <https://github.com/IBM/AMLSim>
-
-This is a work in progress. We invite others to collaborate.
-
-Stay tuned for more soon --
->same bat-time, same bat-channel!
-
-
-## Q&A discussion

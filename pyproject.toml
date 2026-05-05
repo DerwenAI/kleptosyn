@@ -9,7 +9,7 @@ build-backend = "poetry.core.masonry.api"
 [project]
 
 name = "kleptosyn"
-version = "1.0.0"
+version = "1.0.1"
 description = "Synthetic data generation for investigative graphs based on patterns of bad-actor tradecraft."
 
 authors = [
@@ -79,16 +79,6 @@ dev = [
     "pytest >= 7.4",
 ]
 
-[tool.poetry]
-
-name = "poetry-precommit"
-version = "0.1.0"
-description = ""
-authors = [ "Paco Nathan <paco@derwen.ai>" ]
-readme = "README.md"
-packages = [
-    { include = "poetry_precommit" }
-]
 
 [tool.poetry.dependencies]
 
