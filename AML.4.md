@@ -1,4 +1,11 @@
-Money laundering generally follows three stages — **placement** (getting illicit cash into the financial system), **layering** (obscuring its origin through complex transactions), and **integration** (reintroducing it as apparently legitimate funds). Most specific techniques are variations on those stages. Here are the common ones discussed in AML literature, journalism, and regulatory guidance:
+
+Money laundering generally follows three stages:
+
+* **placement** (getting illicit cash into the financial system)
+* **layering** (obscuring its origin through complex transactions)
+* **integration** (reintroducing it as apparently legitimate funds)
+
+Most specific techniques are variations on those stages. Here are the common ones discussed in AML literature, journalism, and regulatory guidance:
 
 
 ## Placement techniques
